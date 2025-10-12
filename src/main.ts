@@ -2,6 +2,7 @@ import { MindMapCreate } from '.'
 import type { NodeData } from './type'
 import typescriptLogo from './typescript.svg'
 import viteLogo from '/vite.svg'
+import './style.css'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -102,4 +103,13 @@ const sampleMindMapData: NodeData[] = [
     ]
   }
 ]
-MindMapCreate(document.querySelector<HTMLDivElement>('#main')!, sampleMindMapData)
+
+MindMapCreate({
+  container: document.querySelector<HTMLDivElement>('#main')!, 
+  data: sampleMindMapData,
+  graph: {
+    grid: {
+      type: 'double-mesh',
+    }
+  }
+})

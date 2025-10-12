@@ -19,7 +19,7 @@ export class Graph {
             width: options?.width ?? 800,
             height: options?.height ?? 600,
             grid: options?.grid ?? false,
-            background: options?.background ?? '#fff',
+            background: options?.background ?? '#f2f7fa',
         }
 
         this.width = opts.width

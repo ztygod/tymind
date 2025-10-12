@@ -56,14 +56,76 @@ export interface EdgeData {
  */
 export interface GraphOptions {
   /** Canvas width (in pixels) */
-  width: number;
+  width?: number;
 
   /** Canvas height (in pixels) */
-  height: number;
+  height?: number;
 
-  /** Whether to display a background grid (optional) */
-  grid?: boolean;
+  /**
+   * Background grid configuration.
+   * 
+   * - `false` → No grid is rendered.
+   * - `true` → Use the default grid settings ( DotGridConfig ).
+   * - `GridConfig` → Custom grid configuration.
+   */
+  grid?: boolean | GridConfig;
 
   /** Background color of the canvas (optional) */
   background?: string;
 }
+
+/** Base configuration shared by all grid types */
+interface BaseGridConfig {
+  /** Grid Type */
+  type: 'dot' | 'mesh' | 'double-mesh';
+
+  /** Grid spacing (distance between grid units) */
+  gridSize?: number;
+}
+
+/** Configuration for dot-style grids */
+export interface DotGridConfig extends BaseGridConfig {
+  type: 'dot';
+
+  /** Color of each dot */
+  dotColor?: string;
+
+  /** Radius (thickness) of each dot */
+  dotThickness?: number;
+}
+
+/** Configuration for line-style grids */
+export interface MeshGridConfig extends BaseGridConfig{
+  type: 'mesh';
+
+  /** Color of each line */
+  meshColor?: string;
+
+  /** Line width (thickness) */
+  meshThickness?: number;
+}
+
+/** Configuration for double-mesh grids */
+export interface DoubleMeshConfig extends BaseGridConfig {
+  type: 'double-mesh'
+
+   /** Thin line color */
+  thinLineColor?: string;
+
+  /** Thin line width */
+  thinLineWidth?: number;
+
+  /** Bold line color */
+  boldLineColor?: string;
+
+  /** Bold line width */
+  boldLineWidth?: number;
+
+  /** Interval between bold lines (multiples of gridSize, optional) */
+  boldLineInterval?: number;
+}
+
+export type GridConfig = 
+  | DotGridConfig
+  | MeshGridConfig
+  | DoubleMeshConfig
