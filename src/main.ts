@@ -1,5 +1,5 @@
 import { MindMapCreate } from '.'
-import type { NodeData } from './type'
+import type { Node } from './type'
 import typescriptLogo from './typescript.svg'
 import viteLogo from '/vite.svg'
 import './style.css'
@@ -16,93 +16,60 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <div id="main"></div>
   </div>
 `
-const sampleMindMapData: NodeData[] = [
-  {
-    id: 'root',
-    label: 'Mind Map',
-    type: 'root',
-    color: '#4e79a7',
-    children: [
-      {
-        id: '1',
-        label: 'Frontend',
-        type: 'category',
-        color: '#f28e2b',
-        children: [
-          {
-            id: '1-1',
-            label: 'HTML',
-            type: 'topic',
-            notes: 'Markup language for web pages'
-          },
-          {
-            id: '1-2',
-            label: 'CSS',
-            type: 'topic',
-            notes: 'Styling web pages'
-          },
-          {
-            id: '1-3',
-            label: 'JavaScript',
-            type: 'topic',
-            notes: 'Interactive web behavior'
-          }
-        ]
-      },
-      {
-        id: '2',
-        label: 'Backend',
-        type: 'category',
-        color: '#e15759',
-        children: [
-          {
-            id: '2-1',
-            label: 'Node.js',
-            type: 'topic',
-            notes: 'JavaScript runtime for server'
-          },
-          {
-            id: '2-2',
-            label: 'Database',
-            type: 'topic',
-            children: [
-              {
-                id: '2-2-1',
-                label: 'SQL',
-                type: 'subtopic',
-                notes: 'Relational databases'
-              },
-              {
-                id: '2-2-2',
-                label: 'NoSQL',
-                type: 'subtopic',
-                notes: 'Non-relational databases'
-              }
-            ]
-          }
-        ]
-      },
-      {
-        id: '3',
-        label: 'DevOps',
-        type: 'category',
-        color: '#76b7b2',
-        children: [
-          {
-            id: '3-1',
-            label: 'Docker',
-            type: 'topic'
-          },
-          {
-            id: '3-2',
-            label: 'CI/CD',
-            type: 'topic'
-          }
-        ]
-      }
-    ]
+const sampleMindMapData: Node = {
+  "id": "n1",
+  "label": "中心主题",
+  "color": "#ff6b6b",
+  "shape": "rect",
+  "size": {
+    "width": 120,
+    "height": 50
+  },
+  "style": {
+    "borderColor": "#333",
+    "borderWidth": 2,
+    "background": "#fffbe6",
+    "fontSize": 14,
+    "fontColor": "#222"
+  },
+  "position": {
+    "x": 0,
+    "y": 0
+  },
+  "collapsed": false,
+  "children": [
+    {
+      "id": "n2",
+      "label": "分支 1",
+      "color": "#4dabf7",
+      "shape": "circle",
+      "children": [
+        {
+          "id": "n3",
+          "label": "子节点 A",
+          "color": "#74c0fc",
+          "shape": "rect"
+        },
+        {
+          "id": "n4",
+          "label": "子节点 B",
+          "color": "#74c0fc",
+          "shape": "rect"
+        }
+      ]
+    },
+    {
+      "id": "n5",
+      "label": "分支 2",
+      "color": "#63e6be",
+      "shape": "rect"
+    }
+  ],
+  "data": {
+    "note": "自定义扩展字段",
+    "link": "https://example.com"
   }
-]
+}
 
 MindMapCreate({
   container: document.querySelector<HTMLDivElement>('#main')!, 

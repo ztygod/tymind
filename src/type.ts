@@ -8,46 +8,12 @@ export interface MindMapOptions {
   /**
    * Initial hierarchical data for the mind map.
    */
-  data?: NodeData[];
+  data: Node;
 
   /**
    * Graph rendering configurations (size, grid, background, etc.)
    */
   graph?: GraphOptions;
-}
-
-/**
- * Structure of a single node in the mind map.
- */
-export interface NodeData {
-  /** Unique identifier of the node */
-  id: string;
-
-  /** Display label of the node */
-  label: string;
-
-  /** Child nodes, forming a tree structure */
-  children?: NodeData[];
-
-  /** Allow arbitrary custom attributes */
-  [key: string]: any;
-}
-
-/**
- * Structure of an edge (connection) between two nodes.
- */
-export interface EdgeData {
-  /** Unique identifier of the edge */
-  id: string;
-
-  /** ID of the source node */
-  source: string;
-
-  /** ID of the target node */
-  target: string;
-
-  /** Allow arbitrary custom attributes */
-  [key: string]: any;
 }
 
 /**
@@ -129,3 +95,89 @@ export type GridConfig =
   | DotGridConfig
   | MeshGridConfig
   | DoubleMeshConfig
+
+
+/**
+ * Structure of a single node in the mind map.
+ */
+export interface Node {
+  id: string,
+  label: string,
+  color?: string,
+  shape?: NodeShape,
+  size?: NodeSize,
+  style?: NodeStyle,
+  position?: NodePosition
+  collapsed?: boolean
+  children?: Node[]
+  data?: Record<string, any>
+}
+
+export type NodeShape = 'rect' | 'circle' | 'diamond' | 'ellipse'
+
+export interface NodeSize {
+  width: number
+  height: number
+}
+
+export interface NodePosition {
+  x: number
+  y: number
+}
+
+export interface NodeStyle {
+  borderColor?: string
+  borderWidth?: number
+  background?: string
+  fontSize?: number
+  fontColor?: string
+}
+
+
+/**
+ * Structure of an edge (connection) between two nodes.
+ */
+export interface Edge {
+  /** Unique ID of the edge */
+  id: string
+
+  /** ID of the source node */
+  source: string
+
+  /** ID of the target node */
+  target: string
+
+  /** Connection type */
+  type?: EdgeType
+
+  /** Line color */
+  color?: string
+
+  /** Line thickness */
+  width?: number
+
+  /** Line style */
+  style?: EdgeStyle
+
+  /** Arrow direction */
+  arrow?: EdgeArrow
+
+  /** Optional text label */
+  label?: string
+
+  /** Label style */
+  labelStyle?: EdgeLabelStyle
+
+  /** Custom data for extensions */
+  data?: Record<string, any>
+}
+
+export type EdgeType = 'line' | 'curve' | 'bezier'
+export type EdgeStyle = 'solid' | 'dashed' | 'dotted'
+export type EdgeArrow = 'none' | 'start' | 'end' | 'both'
+
+export interface EdgeLabelStyle {
+  fontSize?: number
+  fontColor?: string
+  background?: string
+}

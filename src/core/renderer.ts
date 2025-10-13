@@ -3,8 +3,10 @@ import type {
     DoubleMeshConfig, 
     GraphOptions, 
     GridConfig, 
-    MeshGridConfig 
+    MeshGridConfig, 
+    Node
 } from "../type"
+import type { Edge } from "./edge"
 
 export class Renderer {
     private svgRoot: SVGSVGElement
@@ -93,6 +95,24 @@ export class Renderer {
             default:
                 break
         }
+    }
+
+    public drawNode(rootNode: Node): SVGGElement {
+
+    }
+
+    public drawEdge(edge: Edge): SVGGElement {
+
+    }
+
+    /**  Update Node Position */
+    public updateNodePosition(element: SVGGElement, x: number, y: number): void {
+
+    } 
+
+    /** Update Edge Position */
+    public updateEdgePath(element: SVGGElement, edge: Edge): void {
+
     }
 
     /** Draw dot-style grid */
