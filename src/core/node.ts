@@ -1,10 +1,10 @@
-import type { NodePosition, NodeShape, NodeSize, NodeStyle, Node as NodeType } from "../type"
+import type { NodePosition, NodeShape, NodeSize, NodeStyle, NodeData } from "../type"
+import type { Edge } from "./edge"
 import type { Renderer } from "./renderer"
 
 export class Node {
     readonly id: string
     label: string
-    color?: string
     shape?: NodeShape
     size?: NodeSize
     style?: NodeStyle
@@ -12,16 +12,47 @@ export class Node {
     collapsed?: boolean
     children?: Node[]
     data?: Record<string, any>
+    /** Attributes used to store connection relationships */
+    incomingEdges: Edge[] = []
+    outgoingEdges: Edge[] = []
+
 
     private _renderer: Renderer
     private _element: SVGGElement | null = null // Store the SVG element corresponding to this node
 
-    constructor(date: { id: string, label: string } & Partial<Omit<NodeType, 'id' | 'label'>>, renderer: Renderer) {
+    constructor(date: { id: string, label: string } & Partial<Omit<NodeData, 'id' | 'label'>>, 
+        renderer: Renderer
+    ) {
+        // Default value
+        const {
+            shape = 'rect',
+            size = { width: 100, height: 40 },
+            style = {
+                "borderColor": "#333",
+                "borderWidth": 2,
+                "background": "#fffbe6",
+                "fontSize": 14,
+                "fontColor": "#222"
+            },
+            position = { x: 0, y: 0 },
+            collapsed = false,
+            children = [],
+            data: customData = {},
+        } = date
+
         this.id = date.id
         this.label = date.label
         this._renderer = renderer
 
-        Object.assign(this, date)
+        Object.assign(this, { 
+            shape,
+            size,
+            style,
+            position,
+            collapsed,
+            children,
+            data: customData,
+        })
     }
 
     /** Command the Renderer to draw itself */
@@ -42,6 +73,34 @@ export class Node {
         if (this._element) {
             this._renderer.updateNodePosition(this._element, x, y)
         }
+    }
+
+    /** Methods for managing edge relationships */
+    public addIncomingEdge(edge: Edge): void {
+        this.incomingEdges.push(edge)
+    }
+
+    public addOutgoingEdge(edge: Edge): void {
+        this.outgoingEdges.push(edge)
+    }
+
+    public removeIncomingEdge(edge: Edge): void {
+        this.incomingEdges.filter(e => e.id !== edge.id)
+    }
+
+    public removeOutgoingEdge(edge: Edge): void {
+        this.outgoingEdges.filter(e => e.id !== edge.id)
+    }
+
+    /** Destroy itself */
+    public destroy() {
+        if (this._element) {
+            this._renderer.removeElement(this._element)
+            this._element = null
+        }
+        this.incomingEdges = []
+        this.outgoingEdges = []
+        this._renderer = null as any
     }
 
     /** TODO: Enable node drag-and-drop functionality */

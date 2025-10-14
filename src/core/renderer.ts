@@ -4,9 +4,9 @@ import type {
     GraphOptions, 
     GridConfig, 
     MeshGridConfig, 
-    Node
 } from "../type"
 import type { Edge } from "./edge"
+import type { Node } from "./node"
 
 export class Renderer {
     private svgRoot: SVGSVGElement
@@ -37,6 +37,10 @@ export class Renderer {
 
     public setBackground(color: string): void {
         this.svgRoot.style.backgroundColor = color
+    }
+
+    public removeElement(element: SVGGElement): void {
+
     }
 
     public drawGrid(grid: boolean | GridConfig): void {

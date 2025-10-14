@@ -1,7 +1,14 @@
-import type { GraphOptions, Node as NodeType, Edge as EdgeType } from "../type"
+import type { EdgeStyleConfig, GraphOptions, NodeData } from "../type"
 import { Edge } from "./edge"
 import { Node } from "./node"
 import { Renderer } from "./renderer"
+
+interface GraphInitOptions {
+  container: HTMLDivElement
+  data: NodeData
+  graphOptions?: GraphOptions
+  defaultEdgeStyle?: EdgeStyleConfig
+}
 
 export class Graph {
     public width
@@ -13,13 +20,31 @@ export class Graph {
     private _nodes: Map<string, Node> = new Map()
     private _edges: Map<string, Edge> = new Map()
 
-    constructor(container: HTMLDivElement, options: GraphOptions | undefined, rootNode: NodeType) {
-        // Use default values
+    constructor(options: GraphInitOptions) {
+        const { 
+            container, 
+            data, 
+            graphOptions, 
+            defaultEdgeStyle = {
+                type: 'line',
+                color: 'rgb(0,0,0)',
+                width: 1,
+                style:'solid',
+                arrow: 'end',
+                label: '',
+                labelStyle: {
+                    fontSize: 10,
+                    fontColor: 'rgb(0,0,0)',
+                    background: 'rgb(230,230,230)'
+                }
+            } 
+        } = options
+
         const opts = {
-            width: options?.width ?? 800,
-            height: options?.height ?? 600,
-            grid: options?.grid ?? false,
-            background: options?.background ?? '#f2f7fa',
+            width: graphOptions?.width || 800,
+            height: graphOptions?.height || 600,
+            grid: graphOptions?.grid || false,
+            background: graphOptions?.background || '#f2f7fa'
         }
 
         this.width = opts.width
@@ -31,15 +56,16 @@ export class Graph {
         this._renderer = new Renderer(container, opts)
 
         // Init Node and load data
+        this.loadData(data, defaultEdgeStyle)
         
     }
 
-    public loadData(rootNode: NodeType): void {
-        // clean old data
+    public loadData(rootNode: NodeData, defaultEdgeStyle?: EdgeStyleConfig): void {
+        // Clean old data
         this._clean()
 
-        // Create Instance
-        this._createInstancesFromData
+        // Create Instance ( Nodes and Edges )
+        this._createInstancesFromData(rootNode, defaultEdgeStyle)
 
         // Use layout algorithms to calculate the position of each node
         this._applyLayout()
@@ -48,17 +74,17 @@ export class Graph {
         this._drawAll()
     }
 
-    private _createInstancesFromData(rootNode: NodeType): void {
-        const traverse = (currentNodeData: NodeType, parentNodeInstance: Node | null): void => {
+    private _createInstancesFromData(rootNode: NodeData, defaultEdgeStyle?: EdgeStyleConfig): void {
+        const traverse = (currentNodeData: NodeData, parentNodeInstance: Node | null): void => {
             const newNodeInstance = new Node(currentNodeData, this._renderer)
             this._nodes.set(newNodeInstance.id, newNodeInstance)
 
             if (parentNodeInstance) {
-                const edgeData: EdgeType = {
+                const edgeData = {
                     id: `edge-${parentNodeInstance.id}-${currentNodeData.id}`,
-                    source: parentNodeInstance.id,
-                    target: currentNodeData.id,
-                    // ... 从 currentNodeData.edgeData 读取其他属性 ...
+                    source: parentNodeInstance,
+                    target: newNodeInstance,
+                    ...defaultEdgeStyle
                 }
 
                 const newEdgeInstance = new Edge(
@@ -84,8 +110,10 @@ export class Graph {
 
     }
 
-    private _clean() {
-
+    private _clean(): void {
+        this._nodes.forEach(node => node.destroy?.())
+        this._edges.forEach(edge => edge.destroy())
+        this._nodes.clear()
+        this._edges.clear()
     }
-
 }

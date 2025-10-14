@@ -1,5 +1,5 @@
 import { MindMapCreate } from '.'
-import type { Node } from './type'
+import type { NodeData } from './type'
 import typescriptLogo from './typescript.svg'
 import viteLogo from '/vite.svg'
 import './style.css'
@@ -16,10 +16,9 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <div id="main"></div>
   </div>
 `
-const sampleMindMapData: Node = {
+const sampleMindMapData: NodeData = {
   "id": "n1",
   "label": "中心主题",
-  "color": "#ff6b6b",
   "shape": "rect",
   "size": {
     "width": 120,
@@ -41,19 +40,16 @@ const sampleMindMapData: Node = {
     {
       "id": "n2",
       "label": "分支 1",
-      "color": "#4dabf7",
       "shape": "circle",
       "children": [
         {
           "id": "n3",
           "label": "子节点 A",
-          "color": "#74c0fc",
           "shape": "rect"
         },
         {
           "id": "n4",
           "label": "子节点 B",
-          "color": "#74c0fc",
           "shape": "rect"
         }
       ]
@@ -61,7 +57,6 @@ const sampleMindMapData: Node = {
     {
       "id": "n5",
       "label": "分支 2",
-      "color": "#63e6be",
       "shape": "rect"
     }
   ],
@@ -74,7 +69,7 @@ const sampleMindMapData: Node = {
 MindMapCreate({
   container: document.querySelector<HTMLDivElement>('#main')!, 
   data: sampleMindMapData,
-  graph: {
+  graphOptions: {
     grid: {
       type: 'double-mesh',
     }

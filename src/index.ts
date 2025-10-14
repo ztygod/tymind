@@ -1,5 +1,5 @@
 import { Graph } from "./core/graph";
-import type { MindMapOptions, Node } from "./type";
+import type { MindMapOptions, NodeData } from "./type";
 
 /**
  * Creates and initializes a MindMap instance.
@@ -9,13 +9,13 @@ import type { MindMapOptions, Node } from "./type";
  * 2. `MindMapCreate(containerId: string, data: Node)`
  * 3. `MindMapCreate(options: MindMapOptions)`
  */
-export function MindMapCreate(container: HTMLDivElement, data: Node): Graph
-export function MindMapCreate(containerId: string, data: Node): Graph
+export function MindMapCreate(container: HTMLDivElement, data: NodeData): Graph
+export function MindMapCreate(containerId: string, data: NodeData): Graph
 export function MindMapCreate(options: MindMapOptions): Graph
 
 export function MindMapCreate(
   arg1: string | HTMLDivElement | MindMapOptions,
-  arg2?: Node
+  arg2?: NodeData
 ): Graph {
   let options: MindMapOptions
 
@@ -45,8 +45,13 @@ export function MindMapCreate(
   }
 
   // Initialize Graph
-  const { graph, data } = options
-  const graphInstance = new Graph(containerEl, graph, data)
+  const { graphOptions, data, defaultEdgeStyle } = options
+  const graphInstance = new Graph({
+    container: containerEl,
+    data,
+    graphOptions,
+    defaultEdgeStyle,
+  })
 
   return graphInstance
 }

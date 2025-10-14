@@ -1,10 +1,11 @@
-import type { EdgeArrow, EdgeLabelStyle, EdgeStyle, EdgeType, Node, Edge as EdgeDataType } from "../type"
+import type { EdgeArrow, EdgeLabelStyle, EdgeStyle, EdgeType, EdgeData } from "../type"
+import type { Node } from "./node"
 import type { Renderer } from "./renderer"
 
 export class Edge {
     readonly id: string
-    readonly source: string
-    readonly target: string
+    readonly source: Node
+    readonly target: Node
     type?: EdgeType
     color?: string
     width?: number
@@ -18,7 +19,7 @@ export class Edge {
     private _element: SVGGElement | null = null
 
     constructor(data: 
-        { id: string, source: string, target: string } & Partial<Omit<EdgeDataType, 'id' | 'source' | 'target'>>,
+        { id: string, source: Node, target: Node } & Partial<Omit<EdgeData, 'id' | 'source' | 'target'>>,
         renderer: Renderer
     ) {
         this.id = data.id
@@ -28,6 +29,9 @@ export class Edge {
 
 
         Object.assign(this, data)
+
+        this.source.addOutgoingEdge(this)
+        this.target.addIncomingEdge(this)
     }
 
     /** Command the Renderer to draw itself */
@@ -43,5 +47,13 @@ export class Edge {
         }
     }
 
+    /** Destroy itself */
+    public destroy(): void {
+        if (this._element) {
+            this._renderer.removeElement(this._element)
+        }
+        this.source.removeOutgoingEdge(this)
+        this.target.removeIncomingEdge(this)
+    }
 
 }

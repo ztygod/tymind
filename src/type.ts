@@ -8,12 +8,17 @@ export interface MindMapOptions {
   /**
    * Initial hierarchical data for the mind map.
    */
-  data: Node;
+  data: NodeData;
 
   /**
    * Graph rendering configurations (size, grid, background, etc.)
    */
-  graph?: GraphOptions;
+  graphOptions?: GraphOptions;
+
+  /**
+   * Edges global rendering configurations
+   */
+  defaultEdgeStyle?: EdgeStyleConfig
 }
 
 /**
@@ -100,16 +105,32 @@ export type GridConfig =
 /**
  * Structure of a single node in the mind map.
  */
-export interface Node {
-  id: string,
-  label: string,
-  color?: string,
-  shape?: NodeShape,
-  size?: NodeSize,
-  style?: NodeStyle,
+export interface NodeData {
+  /** Unique identifier of the node */
+  id: string
+
+  /** Display label or text shown inside the node */
+  label: string
+
+  /** Shape of the node */
+  shape?: NodeShape
+
+  /** Size configuration of the node */
+  size?: NodeSize
+
+  /** Style settings (e.g., border, font, background) */
+  style?: NodeStyle
+
+  /** Position of the node in the coordinate system */
   position?: NodePosition
+
+  /** Indicates whether the node is collapsed (children hidden) */
   collapsed?: boolean
-  children?: Node[]
+
+  /** Child nodes, forming a hierarchical tree structure */
+  children?: NodeData[]
+
+  /** Custom data payload attached to this node */
   data?: Record<string, any>
 }
 
@@ -137,16 +158,18 @@ export interface NodeStyle {
 /**
  * Structure of an edge (connection) between two nodes.
  */
-export interface Edge {
+export interface EdgeData extends EdgeStyleConfig{
   /** Unique ID of the edge */
   id: string
 
-  /** ID of the source node */
-  source: string
+  /** Source node */
+  source: Node
 
-  /** ID of the target node */
-  target: string
+  /** Target node */
+  target: Node
+}
 
+export interface EdgeStyleConfig {
   /** Connection type */
   type?: EdgeType
 
