@@ -55,7 +55,7 @@ export class Graph {
         // Init background (grid) in the Renderer, while providing rendering API
         this._renderer = new Renderer(container, opts)
 
-        // Init Node and load data
+        // Init Node, Edge and load data
         this.loadData(data, defaultEdgeStyle)
         
     }
@@ -111,7 +111,7 @@ export class Graph {
     }
 
     private _clean(): void {
-        this._nodes.forEach(node => node.destroy?.())
+        this._nodes.forEach(node => node.destroy())
         this._edges.forEach(edge => edge.destroy())
         this._nodes.clear()
         this._edges.clear()
