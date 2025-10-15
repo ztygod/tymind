@@ -5,7 +5,7 @@ import { DEFAULT_LAYOUT_OPTIONS, type LayoutOptions } from "./type";
 export abstract class BaseLayout {
     protected nodes: Map<string, Node>
     protected edges: Map<string, Edge>
-    protected layoutOptions?: LayoutOptions
+    protected layoutOptions: LayoutOptions
 
     constructor(
         nodes: Map<string, Node>, 
@@ -17,11 +17,7 @@ export abstract class BaseLayout {
         this.layoutOptions = { ...DEFAULT_LAYOUT_OPTIONS, ...options}
     }
 
-    protected execute(): Map<string, Node> | undefined{
-        if (!this._findRootNode()) {
-            console.error("Layout Error: Root node not found.");
-            return
-        }
+    public run(): Map<string, Node> | undefined{
         this.preprocess()
         this.computeLayout(this._findRootNode()!)
         this.postprocess()

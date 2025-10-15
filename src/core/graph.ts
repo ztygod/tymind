@@ -1,3 +1,4 @@
+import { LayoutManager } from "../layout/layout-manager"
 import type { EdgeStyleConfig, GraphOptions, NodeData } from "../type"
 import { Edge } from "./edge"
 import { Node } from "./node"
@@ -75,8 +76,14 @@ export class Graph {
     }
 
     private _createInstancesFromData(rootNode: NodeData, defaultEdgeStyle?: EdgeStyleConfig): void {
-        const traverse = (currentNodeData: NodeData, parentNodeInstance: Node | null): void => {
-            const newNodeInstance = new Node(currentNodeData, this._renderer)
+        const levelCounter: Record<number, number> = {}
+        
+        const traverse = (currentNodeData: NodeData, parentNodeInstance: Node | null, depth: number): void => {
+            if (levelCounter[depth] === undefined) levelCounter[depth] = 0;
+
+            const newNodeInstance = new Node(currentNodeData, this._renderer, depth, levelCounter[depth])
+            levelCounter[depth]++
+
             this._nodes.set(newNodeInstance.id, newNodeInstance)
 
             if (parentNodeInstance) {
@@ -95,15 +102,29 @@ export class Graph {
             }
 
             currentNodeData.children?.forEach(childrenData => {
-                traverse(childrenData, newNodeInstance)
+                traverse(childrenData, newNodeInstance, depth + 1)
             })
         }
 
-        traverse(rootNode, null)
+        traverse(rootNode, null, 0)
     }
 
-    private _applyLayout(): void {
+    private _applyLayout(layoutName: string = 'mindmap'): void {
+        const layoutOptions = {
+            /** TODO */
+        }
 
+        const layout = LayoutManager.getLayout(
+            layoutName,
+            this._nodes,
+            this._edges,
+            // layoutOptions
+        )
+
+        if (layout) {
+            /** Calculate the layout and coordinates of each node and edge */
+            layout.run()
+        }
     }
 
     private _drawAll(): void {

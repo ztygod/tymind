@@ -1,9 +1,13 @@
 import { Graph } from "./core/graph";
+import { ForceLayout } from "./layout/force/force-layout";
 import { LayoutManager } from "./layout/layout-manager";
+import { MindmapLayout } from "./layout/tree/mindmap-layout";
 import { TreeLayout } from "./layout/tree/tree-layout";
 import type { MindMapOptions, NodeData } from "./type";
 
-LayoutManager.register('tree-layout', TreeLayout)
+LayoutManager.register('tree', TreeLayout)
+LayoutManager.register('mindmap', MindmapLayout)
+LayoutManager.register('force', ForceLayout)
 
 /**
  * Creates and initializes a MindMap instance.

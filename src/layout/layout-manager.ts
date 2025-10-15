@@ -9,6 +9,11 @@ type LayourConstructor = new (
     options?: LayoutOptions
 ) => BaseLayout
 
+/**
+ * LayoutManager is a central registry for layout algorithms.
+ * It allows registering custom layout classes and retrieving
+ * instances based on a layout name.
+ */
 export class LayoutManager {
     private static layout: Map<string, LayourConstructor> = new Map()
 

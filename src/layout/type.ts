@@ -1,14 +1,13 @@
 import type { EdgeData, NodeData } from "../type"
 
-export const DEFAULT_LAYOUT_OPTIONS: Required<LayoutOptions> = {
-  layoutType: 'tree',
+export const DEFAULT_LAYOUT_OPTIONS: LayoutOptions = {
+  layoutType: 'mindmap',
+  viewport: { width: 800, height: 600 },
   direction: 'LR',
   nodeHorizontalGap: 80,
   nodeVerticalGap: 20,
-  rootPosition: { x: 0, y: 0 },
   preventOverlap: true,
   animate: false,
-  customLayoutFn: () => {}
 }
 
 export interface LayoutOptions {
@@ -17,6 +16,14 @@ export interface LayoutOptions {
    * Supported types: tree, radial, force-directed, mind map.
    */
   layoutType: 'tree' | 'radial' | 'force' | 'mindmap';
+
+  /**
+   * Width and Height of svg container
+   */
+  viewport: {
+    width: number,
+    height: number,
+  }
 
   /**
    * Layout direction (applicable for tree or mind map layouts).

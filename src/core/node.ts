@@ -5,6 +5,8 @@ import type { Renderer } from "./renderer"
 export class Node {
     readonly id: string
     label: string
+    level: number /** Current node level */
+    index: number /** Current node inedx */
     shape?: NodeShape
     size?: NodeSize
     style?: NodeStyle
@@ -21,7 +23,9 @@ export class Node {
     private _element: SVGGElement | null = null // Store the SVG element corresponding to this node
 
     constructor(date: { id: string, label: string } & Partial<Omit<NodeData, 'id' | 'label'>>, 
-        renderer: Renderer
+        renderer: Renderer,
+        level: number,
+        index: number
     ) {
         // Default value
         const {
@@ -42,6 +46,8 @@ export class Node {
 
         this.id = date.id
         this.label = date.label
+        this.level = level
+        this.index = index
         this._renderer = renderer
 
         Object.assign(this, { 
