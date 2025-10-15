@@ -1,5 +1,9 @@
 import { Graph } from "./core/graph";
+import { LayoutManager } from "./layout/layout-manager";
+import { TreeLayout } from "./layout/tree/tree-layout";
 import type { MindMapOptions, NodeData } from "./type";
+
+LayoutManager.register('tree-layout', TreeLayout)
 
 /**
  * Creates and initializes a MindMap instance.
