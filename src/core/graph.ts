@@ -101,9 +101,11 @@ export class Graph {
                 this._edges.set(newEdgeInstance.id, newEdgeInstance)
             }
 
-            currentNodeData.children?.forEach(childrenData => {
-                traverse(childrenData, newNodeInstance, depth + 1)
-            })
+            if (currentNodeData.children) {
+                currentNodeData.children?.forEach(childrenData => {
+                    traverse(childrenData, newNodeInstance, depth + 1)
+                })
+            }
         }
 
         traverse(rootNode, null, 0)

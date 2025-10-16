@@ -31,10 +31,8 @@ export interface LayoutOptions {
    * - RL: Right to Left
    * - TB: Top to Bottom
    * - BT: Bottom to Top
-   * - H:  Horizontal mind map (center node expands horizontally)
-   * - V:  Vertical mind map (center node expands vertically)
    */
-  direction?: 'LR' | 'RL' | 'TB' | 'BT' | 'H' | 'V';
+  direction?: 'LR' | 'RL' | 'TB' | 'BT';
 
   /** Horizontal spacing between sibling nodes. */
   nodeHorizontalGap?: number;

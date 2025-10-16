@@ -98,7 +98,7 @@ export class Node {
         this.outgoingEdges.filter(e => e.id !== edge.id)
     }
 
-    /** Destroy itself */
+    // Destroy itself
     public destroy() {
         if (this._element) {
             this._renderer.removeElement(this._element)
