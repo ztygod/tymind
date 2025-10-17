@@ -17,6 +17,15 @@ export class Node {
     /** Attributes used to store connection relationships */
     incomingEdges: Edge[] = []
     outgoingEdges: Edge[] = []
+    /** Temporary properties during the layout process */
+    layoutProps: {
+        /** Subtree total height */
+        subtreeHeight?: number
+        /** Y coordinate offset relative to the parent node */
+        yOffset?: number
+        /** Correction value used to avoid subtree overlap */
+        modifier?: number
+    } ={}
 
 
     private _renderer: Renderer
