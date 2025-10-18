@@ -1,6 +1,6 @@
 import type { EdgeArrow, EdgeLabelStyle, EdgeStyle, EdgeType, EdgeData } from "../type"
 import type { Node } from "./node"
-import type { Renderer } from "./renderer"
+import type { Renderer } from "../renderer/renderer"
 
 export class Edge {
     readonly id: string

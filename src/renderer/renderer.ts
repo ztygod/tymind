@@ -7,8 +7,8 @@ import type {
     NodeShape,
     NodeStyle, 
 } from "../type"
-import type { Edge } from "./edge"
-import { Node } from "./node"
+import type { Edge } from "../core/edge"
+import { Node } from "../core/node"
 
 export class Renderer {
     private svgRoot: SVGSVGElement

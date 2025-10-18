@@ -1,6 +1,6 @@
 import type { NodePosition, NodeShape, NodeSize, NodeStyle, NodeData } from "../type"
 import type { Edge } from "./edge"
-import type { Renderer } from "./renderer"
+import type { Renderer } from "../renderer/renderer"
 
 export class Node {
     readonly id: string
