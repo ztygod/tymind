@@ -3,10 +3,12 @@ import type {
     DoubleMeshConfig, 
     GraphOptions, 
     GridConfig, 
-    MeshGridConfig, 
+    MeshGridConfig,
+    NodeShape,
+    NodeStyle, 
 } from "../type"
 import type { Edge } from "./edge"
-import type { Node } from "./node"
+import { Node } from "./node"
 
 export class Renderer {
     private svgRoot: SVGSVGElement
@@ -101,13 +103,32 @@ export class Renderer {
         }
     }
 
-    public drawNode(rootNode: Node): SVGGElement {
+    public drawNode(node: Node): SVGGElement {
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+        g.setAttribute('class', 'graph-node')
 
+        const { id, label, shape = 'rect', size, position, style } = node
+        const { width = 100, height = 40 } = size ?? { width: 100, height: 40 }
+        const { x = 0, y = 0 } = position ?? { x: 0, y: 0 }
+
+        // Create shape and label text
+        const shapeEl = this.createShape(shape, width, height, style)
+        const textEl = this.createText(label, width, height, style)
+
+        const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+        wrapper.setAttribute('transform', `translate(${x}, ${y})`)
+        wrapper.appendChild(shapeEl)
+        wrapper.appendChild(textEl)
+
+        g.appendChild(wrapper)
+        this.mainLayer.appendChild(g)
+
+        return g
     }
 
-    public drawEdge(edge: Edge): SVGGElement {
+    // public drawEdge(edge: Edge): SVGGElement {
 
-    }
+    // }
 
     /**  Update Node Position */
     public updateNodePosition(element: SVGGElement, x: number, y: number): void {
@@ -280,5 +301,74 @@ export class Renderer {
 
         // insert at the bottom of the main layer
         this.svgRoot.insertBefore(rect, this.mainLayer)
+    }
+
+    private createShape(shape: NodeShape, width: number, height: number, style?: NodeStyle): SVGElement {
+        const ns = 'http://www.w3.org/2000/svg'
+        const stroke = style?.borderColor ?? '#666'
+        const strokeWidth = style?.borderWidth ?? 1.5
+        const fill = style?.background ?? '#ffffff'
+        
+        let shapeEl: SVGElement
+
+        switch (shape) {
+            case 'rect':
+                shapeEl = document.createElementNS(ns, 'rect')
+                shapeEl.setAttribute('width', String(width))
+                shapeEl.setAttribute('height', String(height))
+                shapeEl.setAttribute('rx', '6')
+                shapeEl.setAttribute('ry', '6')
+                break
+            case "circle":
+                shapeEl = document.createElementNS(ns, 'circle')
+                const r = Math.min(width, height) / 2
+                shapeEl.setAttribute('r', String(r))
+                shapeEl.setAttribute('cx', String(r))
+                shapeEl.setAttribute('cy', String(r))
+                break
+            case "diamond":
+                shapeEl = document.createElementNS(ns, 'polygon')
+                const points = [
+                    `${width / 2},0`,
+                    `${width},${height / 2}`,
+                    `${width / 2},${height}`,
+                    `0,${height / 2}`
+                ].join(' ')
+                shapeEl.setAttribute('points', points)
+                break
+            case "ellipse":
+                shapeEl = document.createElementNS(ns, 'ellipse')
+                shapeEl.setAttribute('cx', String(width))
+                shapeEl.setAttribute('cy', String(height))
+                shapeEl.setAttribute('rx', String(width / 2))
+                shapeEl.setAttribute('ry', String(height / 2))
+                break
+            default:
+                throw new Error(`Unsupported shape: ${shape}`)       
+        }
+
+        shapeEl.setAttribute('fill', fill)
+        shapeEl.setAttribute('stroke', stroke)
+        shapeEl.setAttribute('stroke-width', String(strokeWidth))
+        return shapeEl
+    }
+
+    private createText(label: string, width: number, height: number, style?: NodeStyle) {
+        const ns = 'http://www.w3.org/2000/svg'
+        const textEl = document.createElementNS(ns, 'text')
+        textEl.textContent = label ?? ''
+
+        const fontSize = style?.fontSize ?? 14
+        const fontColor = style?.fontColor ?? '#333'
+
+        textEl.setAttribute('x', String(width / 2))
+        textEl.setAttribute('y', String(height / 2 + fontSize / 3))
+        textEl.setAttribute('text-anchor', 'middle')
+        textEl.setAttribute('font-size', String(fontSize))
+        textEl.setAttribute('fill', fontColor)
+        textEl.setAttribute('dominant-baseline', 'middle')
+        textEl.setAttribute('pointer-events', 'none') 
+
+        return textEl
     }
 }

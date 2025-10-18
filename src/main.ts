@@ -40,7 +40,7 @@ const sampleMindMapData: NodeData = {
     {
       "id": "n2",
       "label": "分支 1",
-      "shape": "circle",
+      // "shape": "circle",
       "children": [
         {
           "id": "n3",
@@ -50,13 +50,45 @@ const sampleMindMapData: NodeData = {
         {
           "id": "n4",
           "label": "子节点 B",
+          "shape": "rect",
+          "children" :[
+            {
+              "id": "n4-1",
+              "label": "子节点 B-1",
+              "shape": "rect"
+            },
+            {
+              "id": "n4-2",
+              "label": "子节点 B-2",
+              "shape": "rect"
+            }
+          ]
+        },
+        {
+          "id": "n5",
+          "label": "子节点 C",
           "shape": "rect"
         }
       ]
     },
     {
-      "id": "n5",
+      "id": "n6",
       "label": "分支 2",
+      "shape": "rect",
+      "children": [
+        {
+          "id": "n6-1",
+          "label": "分支 2-1"
+        },
+        {
+          "id": "n6-2",
+          "label": "分支 2-2"
+        }
+      ]
+    },
+    {
+      "id": "n7",
+      "label": "分支 3",
       "shape": "rect"
     }
   ],
@@ -71,7 +103,7 @@ MindMapCreate({
   data: sampleMindMapData,
   graphOptions: {
     grid: {
-      type: 'double-mesh',
+      type: 'dot',
     }
   }
 })

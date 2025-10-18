@@ -130,7 +130,9 @@ export class Graph {
     }
 
     private _drawAll(): void {
-
+        for (const node of this._nodes.values()) {
+            node.draw()
+        }
     }
 
     private _clean(): void {

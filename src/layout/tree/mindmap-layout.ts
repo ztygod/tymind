@@ -3,7 +3,7 @@ import { BaseLayout } from "../base-layout";
 
 export class MindmapLayout extends BaseLayout{
     protected computeLayout(rootNode: Node): void {
-        if (!this.nodes || this.nodes.size === 0) return;
+        if (!this.nodes || this.nodes.size === 0) return
 
         this._computeSubTreeHeight(rootNode)
         
@@ -20,10 +20,12 @@ export class MindmapLayout extends BaseLayout{
 
     protected preprocess(): void {
         if (!this._findRootNode()) {
-            console.error("Layout Error: Root node not found.");
-            return
+            console.error("MindmapLayout Error: Root node not found.")
+            return 
         }
     }
+
+    /** Center overall */
     protected postprocess(): void {
         const { width: viewportWidth, height: viewportHeight } = this.layoutOptions.viewport
         if (!this.nodes || this.nodes.size === 0) return
@@ -92,7 +94,6 @@ export class MindmapLayout extends BaseLayout{
         }
         const siblingGap = this.layoutOptions.nodeVerticalGap ?? 20
         const levelGap = this.layoutOptions.nodeHorizontalGap ?? 80
-        const alpha = 0.1 // The scaling factor slightly tightens the spacing between levels.
 
         const totalChildrenHeight = node.layoutProps.subtreeHeight!
 
