@@ -20,7 +20,9 @@ body {
 .logo {
   height: 80px;
   padding: 1.5em;
-  transition: transform 0.3s ease, filter 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    filter 0.3s ease;
 }
 
 .logo:hover {
@@ -46,7 +48,9 @@ h1 {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   padding: 2rem;
   min-height: 480px;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
 }
 
 #main:hover {

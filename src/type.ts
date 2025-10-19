@@ -1,6 +1,6 @@
 export interface MindMapOptions {
-  /** 
-   * Container element or selector string 
+  /**
+   * Container element or selector string
    * where the mind map will be rendered.
    */
   container: string | HTMLDivElement;
@@ -18,11 +18,11 @@ export interface MindMapOptions {
   /**
    * Edges global rendering configurations
    */
-  defaultEdgeStyle?: EdgeStyleConfig
+  defaultEdgeStyle?: EdgeStyleConfig;
 }
 
 /**
- * Graph-level configuration options 
+ * Graph-level configuration options
  * controlling rendering size, background, and grid display.
  */
 export interface GraphOptions {
@@ -34,7 +34,7 @@ export interface GraphOptions {
 
   /**
    * Background grid configuration.
-   * 
+   *
    * - `false` → No grid is rendered.
    * - `true` → Use the default grid settings ( DotGridConfig ).
    * - `GridConfig` → Custom grid configuration.
@@ -66,7 +66,7 @@ export interface DotGridConfig extends BaseGridConfig {
 }
 
 /** Configuration for line-style grids */
-export interface MeshGridConfig extends BaseGridConfig{
+export interface MeshGridConfig extends BaseGridConfig {
   type: 'mesh';
 
   /** Color of each line */
@@ -78,9 +78,9 @@ export interface MeshGridConfig extends BaseGridConfig{
 
 /** Configuration for double-mesh grids */
 export interface DoubleMeshConfig extends BaseGridConfig {
-  type: 'double-mesh'
+  type: 'double-mesh';
 
-   /** Thin line color */
+  /** Thin line color */
   thinLineColor?: string;
 
   /** Thin line width */
@@ -96,111 +96,106 @@ export interface DoubleMeshConfig extends BaseGridConfig {
   boldLineInterval?: number;
 }
 
-export type GridConfig = 
-  | DotGridConfig
-  | MeshGridConfig
-  | DoubleMeshConfig
-
+export type GridConfig = DotGridConfig | MeshGridConfig | DoubleMeshConfig;
 
 /**
  * Structure of a single node in the mind map.
  */
 export interface NodeData {
   /** Unique identifier of the node */
-  id: string
+  id: string;
 
   /** Display label or text shown inside the node */
-  label: string
+  label: string;
 
   /** Shape of the node */
-  shape?: NodeShape
+  shape?: NodeShape;
 
   /** Size configuration of the node */
-  size?: NodeSize
+  size?: NodeSize;
 
   /** Style settings (e.g., border, font, background) */
-  style?: NodeStyle
+  style?: NodeStyle;
 
   /** Position of the node in the coordinate system */
-  position?: NodePosition
+  position?: NodePosition;
 
   /** Indicates whether the node is collapsed (children hidden) */
-  collapsed?: boolean
+  collapsed?: boolean;
 
   /** Child nodes, forming a hierarchical tree structure */
-  children?: NodeData[]
+  children?: NodeData[];
 
   /** Custom data payload attached to this node */
-  data?: Record<string, any>
+  data?: Record<string, any>;
 }
 
-export type NodeShape = 'rect' | 'circle' | 'diamond' | 'ellipse'
+export type NodeShape = 'rect' | 'circle' | 'diamond' | 'ellipse';
 
 export interface NodeSize {
-  width: number
-  height: number
+  width: number;
+  height: number;
 }
 
 export interface NodePosition {
-  x: number
-  y: number
+  x: number;
+  y: number;
 }
 
 export interface NodeStyle {
-  borderColor?: string
-  borderWidth?: number
-  background?: string
-  fontSize?: number
-  fontColor?: string
+  borderColor?: string;
+  borderWidth?: number;
+  background?: string;
+  fontSize?: number;
+  fontColor?: string;
 }
-
 
 /**
  * Structure of an edge (connection) between two nodes.
  */
-export interface EdgeData extends EdgeStyleConfig{
+export interface EdgeData extends EdgeStyleConfig {
   /** Unique ID of the edge */
-  id: string
+  id: string;
 
   /** Source node */
-  source: Node
+  source: Node;
 
   /** Target node */
-  target: Node
+  target: Node;
 }
 
 export interface EdgeStyleConfig {
   /** Connection type */
-  type?: EdgeType
+  type?: EdgeType;
 
   /** Line color */
-  color?: string
+  color?: string;
 
   /** Line thickness */
-  width?: number
+  width?: number;
 
   /** Line style */
-  style?: EdgeStyle
+  style?: EdgeStyle;
 
   /** Arrow direction */
-  arrow?: EdgeArrow
+  arrow?: EdgeArrow;
 
   /** Optional text label */
-  label?: string
+  label?: string;
 
   /** Label style */
-  labelStyle?: EdgeLabelStyle
+  labelStyle?: EdgeLabelStyle;
 
   /** Custom data for extensions */
-  data?: Record<string, any>
+  data?: Record<string, any>;
 }
 
-export type EdgeType = 'line' | 'curve' | 'bezier'
-export type EdgeStyle = 'solid' | 'dashed' | 'dotted'
-export type EdgeArrow = 'none' | 'start' | 'end' | 'both'
+export type EdgeType = 'line' | 'curve' | 'bezier';
+export type EdgeStyle = 'solid' | 'dashed' | 'dotted';
+export type EdgeArrow = 'none' | 'start' | 'end' | 'both';
 
 export interface EdgeLabelStyle {
-  fontSize?: number
-  fontColor?: string
-  background?: string
+  fontSize?: number;
+  fontColor?: string;
+  background?: string;
 }

@@ -1,4 +1,4 @@
-import type { EdgeData, NodeData } from "../type"
+import type { EdgeData, NodeData } from '../type';
 
 export const DEFAULT_LAYOUT_OPTIONS: LayoutOptions = {
   layoutType: 'mindmap',
@@ -8,10 +8,10 @@ export const DEFAULT_LAYOUT_OPTIONS: LayoutOptions = {
   nodeVerticalGap: 20,
   preventOverlap: true,
   animate: false,
-}
+};
 
 export interface LayoutOptions {
-  /** 
+  /**
    * Type of layout algorithm.
    * Supported types: tree, radial, force-directed, mind map.
    */
@@ -21,9 +21,9 @@ export interface LayoutOptions {
    * Width and Height of svg container
    */
   viewport: {
-    width: number,
-    height: number,
-  }
+    width: number;
+    height: number;
+  };
 
   /**
    * Layout direction (applicable for tree or mind map layouts).

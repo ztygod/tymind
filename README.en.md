@@ -8,4 +8,3 @@ A lightweight, powerful, and highly customizable TypeScript mind-mapping library
 Written in TypeScript, zero dependencies, built for modern browsers.
 
 </div>
-

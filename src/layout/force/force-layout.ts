@@ -1,15 +1,14 @@
-import type { Node } from "../../core/node";
-import { BaseLayout } from "../base-layout";
+import type { Node } from '../../core/node';
+import { BaseLayout } from '../base-layout';
 
-export class ForceLayout extends BaseLayout{
-    protected computeLayout(rootNode: Node): void {
-        throw new Error("Method not implemented.");
-    }
-    protected preprocess(): void {
-        throw new Error("Method not implemented.");
-    }
-    protected postprocess(): void {
-        throw new Error("Method not implemented.");
-    }
-    
+export class ForceLayout extends BaseLayout {
+  protected computeLayout(rootNode: Node): void {
+    throw new Error('Method not implemented.');
+  }
+  protected preprocess(): void {
+    throw new Error('Method not implemented.');
+  }
+  protected postprocess(): void {
+    throw new Error('Method not implemented.');
+  }
 }
