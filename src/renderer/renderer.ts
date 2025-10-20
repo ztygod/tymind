@@ -9,16 +9,30 @@ import type {
 } from '../type';
 import type { Edge } from '../core/edge';
 import { Node } from '../core/node';
+import { BaseConnector } from './connector';
+import { StraightRouter } from './routers/straight-route';
+import { BezierRouter } from './routers/bezier-router';
 
 export class Renderer {
   private svgRoot: SVGSVGElement;
   private mainLayer: SVGGElement;
+  private connector: BaseConnector;
+  private router: {
+    straight: StraightRouter;
+    bezier: BezierRouter;
+  };
 
   constructor(container: HTMLDivElement, options: Required<GraphOptions>) {
     const { width, height, grid, background } = options;
 
     this.svgRoot = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     this.mainLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+    this.connector = new BaseConnector();
+    this.router = {
+      straight: new StraightRouter(),
+      bezier: new BezierRouter(),
+    };
 
     this.svgRoot.appendChild(this.mainLayer);
     container.appendChild(this.svgRoot);
@@ -105,7 +119,7 @@ export class Renderer {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     g.setAttribute('class', 'graph-node');
 
-    const { id, label, shape = 'rect', size, position, style } = node;
+    const { label, shape = 'rect', size, position, style } = node;
     const { width = 100, height = 40 } = size ?? { width: 100, height: 40 };
     const { x = 0, y = 0 } = position ?? { x: 0, y: 0 };
 
@@ -124,15 +138,50 @@ export class Renderer {
     return g;
   }
 
-  // public drawEdge(edge: Edge): SVGGElement {
+  public drawEdge(edge: Edge): SVGGElement {
+    console.log('begin');
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('id', edge.id);
 
-  // }
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('id', `path-${edge.id}`);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', edge.color || '#a0a0a0');
+    path.setAttribute('stroke-width', String(edge.width || 1));
+
+    g.appendChild(path);
+
+    this.mainLayer.insertBefore(g, this.mainLayer.firstChild);
+    this.updateEdgePath(g, edge);
+
+    return g;
+  }
 
   /**  Update Node Position */
   public updateNodePosition(element: SVGGElement, x: number, y: number): void {}
 
   /** Update Edge Position */
-  public updateEdgePath(element: SVGGElement, edge: Edge): void {}
+  public updateEdgePath(element: SVGGElement, edge: Edge): void {
+    const pathEl = element.querySelector(`#path-${edge.id}`);
+    if (!pathEl) return;
+
+    const routerType = edge.type || 'bezier';
+    const router = this.router[routerType];
+
+    if (!router) {
+      console.error(`Router type "${routerType}" not found for edge ${edge.id}`);
+      return;
+    }
+
+    const { sourcePoint, targetPoint } = this.connector.getEdgesEndPoints(
+      edge.source,
+      edge.target,
+      'LR'
+    );
+
+    const pathD = router.getPathD(sourcePoint, targetPoint);
+    pathEl.setAttribute('d', pathD);
+  }
 
   /** Draw dot-style grid */
   private drawDotPattern(config: DotGridConfig): void {

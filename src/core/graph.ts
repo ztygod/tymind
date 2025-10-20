@@ -27,7 +27,7 @@ export class Graph {
       data,
       graphOptions,
       defaultEdgeStyle = {
-        type: 'line',
+        type: 'bezier',
         color: 'rgb(0,0,0)',
         width: 1,
         style: 'solid',
@@ -132,6 +132,11 @@ export class Graph {
   private _drawAll(): void {
     for (const node of this._nodes.values()) {
       node.draw();
+    }
+
+    for (const edge of this._edges.values()) {
+      edge.draw();
+      console.log('edge draw');
     }
   }
 
