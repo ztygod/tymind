@@ -1,26 +1,16 @@
 import type { EdgeData, NodeData } from '../type';
 
-export const DEFAULT_LAYOUT_OPTIONS: LayoutOptions = {
-  layoutType: 'mindmap',
-  viewport: { width: 800, height: 600 },
-  direction: 'LR',
-  nodeHorizontalGap: 80,
-  nodeVerticalGap: 20,
-  preventOverlap: true,
-  animate: false,
-};
-
 export interface LayoutOptions {
   /**
    * Type of layout algorithm.
    * Supported types: tree, radial, force-directed, mind map.
    */
-  layoutType: 'tree' | 'radial' | 'force' | 'mindmap';
+  layoutType: 'tree' | 'force' | 'mindmap';
 
   /**
    * Width and Height of svg container
    */
-  viewport: {
+  viewport?: {
     width: number;
     height: number;
   };
@@ -32,7 +22,7 @@ export interface LayoutOptions {
    * - TB: Top to Bottom
    * - BT: Bottom to Top
    */
-  direction?: 'LR' | 'RL' | 'TB' | 'BT';
+  direction?: 'LR' | 'RL';
 
   /** Horizontal spacing between sibling nodes. */
   nodeHorizontalGap?: number;

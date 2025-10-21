@@ -138,7 +138,7 @@ export class Renderer {
     return g;
   }
 
-  public drawEdge(edge: Edge): SVGGElement {
+  public drawEdge(edge: Edge, direction: 'LR' | 'RL'): SVGGElement {
     console.log('begin');
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     g.setAttribute('id', edge.id);
@@ -152,7 +152,7 @@ export class Renderer {
     g.appendChild(path);
 
     this.mainLayer.insertBefore(g, this.mainLayer.firstChild);
-    this.updateEdgePath(g, edge);
+    this.updateEdgePath(g, edge, direction);
 
     return g;
   }
@@ -161,7 +161,7 @@ export class Renderer {
   public updateNodePosition(element: SVGGElement, x: number, y: number): void {}
 
   /** Update Edge Position */
-  public updateEdgePath(element: SVGGElement, edge: Edge): void {
+  public updateEdgePath(element: SVGGElement, edge: Edge, direction: 'RL' | 'LR'): void {
     const pathEl = element.querySelector(`#path-${edge.id}`);
     if (!pathEl) return;
 
@@ -176,7 +176,7 @@ export class Renderer {
     const { sourcePoint, targetPoint } = this.connector.getEdgesEndPoints(
       edge.source,
       edge.target,
-      'LR'
+      direction
     );
 
     const pathD = router.getPathD(sourcePoint, targetPoint);

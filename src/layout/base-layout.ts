@@ -1,16 +1,16 @@
 import type { Edge } from '../core/edge';
 import type { Node } from '../core/node';
-import { DEFAULT_LAYOUT_OPTIONS, type LayoutOptions } from './type';
+import type { LayoutOptions } from './type';
 
 export abstract class BaseLayout {
   protected nodes: Map<string, Node>;
   protected edges: Map<string, Edge>;
   protected layoutOptions: LayoutOptions;
 
-  constructor(nodes: Map<string, Node>, edges: Map<string, Edge>, options?: LayoutOptions) {
+  constructor(nodes: Map<string, Node>, edges: Map<string, Edge>, options: LayoutOptions) {
     this.nodes = nodes;
     this.edges = edges;
-    this.layoutOptions = { ...DEFAULT_LAYOUT_OPTIONS, ...options };
+    this.layoutOptions = { ...options };
   }
 
   public run(): Map<string, Node> | undefined {

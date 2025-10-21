@@ -6,7 +6,7 @@ import type { LayoutOptions } from './type';
 type LayourConstructor = new (
   nodes: Map<string, Node>,
   edges: Map<string, Edge>,
-  options?: LayoutOptions
+  options: LayoutOptions
 ) => BaseLayout;
 
 /**
@@ -25,7 +25,7 @@ export class LayoutManager {
     name: string,
     nodes: Map<string, Node>,
     edges: Map<string, Edge>,
-    options?: LayoutOptions
+    options: LayoutOptions
   ): BaseLayout | undefined {
     const layoutClass = this.layout.get(name);
 

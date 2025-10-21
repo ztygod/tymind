@@ -1,3 +1,5 @@
+import type { LayoutOptions } from './layout/type';
+
 export interface MindMapOptions {
   /**
    * Container element or selector string
@@ -13,12 +15,17 @@ export interface MindMapOptions {
   /**
    * Graph rendering configurations (size, grid, background, etc.)
    */
-  graphOptions?: GraphOptions;
+  graphStyle?: GraphOptions;
 
   /**
    * Edges global rendering configurations
    */
-  defaultEdgeStyle?: EdgeStyleConfig;
+  edgeStyle?: EdgeStyleConfig;
+
+  /**
+   * Layout options
+   */
+  layoutOptions?: LayoutOptions;
 }
 
 /**

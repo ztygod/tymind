@@ -53,12 +53,13 @@ export function MindMapCreate(
   }
 
   // Initialize Graph
-  const { graphOptions, data, defaultEdgeStyle } = options;
+  const { graphStyle, data, edgeStyle, layoutOptions } = options;
   const graphInstance = new Graph({
     container: containerEl,
     data,
-    graphOptions,
-    defaultEdgeStyle,
+    graphStyle,
+    edgeStyle,
+    layoutOptions,
   });
 
   return graphInstance;

@@ -6,6 +6,7 @@ export class Edge {
   readonly id: string;
   readonly source: Node;
   readonly target: Node;
+  readonly direction: 'LR' | 'RL';
   type?: EdgeType;
   color?: string;
   width?: number;
@@ -19,7 +20,7 @@ export class Edge {
   private _element: SVGGElement | null = null;
 
   constructor(
-    data: { id: string; source: Node; target: Node } & Partial<
+    data: { id: string; source: Node; target: Node; direction: 'LR' | 'RL' } & Partial<
       Omit<EdgeData, 'id' | 'source' | 'target'>
     >,
     renderer: Renderer
@@ -27,6 +28,7 @@ export class Edge {
     this.id = data.id;
     this.source = data.source;
     this.target = data.target;
+    this.direction = data.direction;
     this._renderer = renderer;
 
     Object.assign(this, data);
@@ -37,13 +39,13 @@ export class Edge {
 
   /** Command the Renderer to draw itself */
   public draw(): void {
-    this._element = this._renderer.drawEdge(this);
+    this._element = this._renderer.drawEdge(this, this.direction);
   }
 
   /** Update Edge Layout */
   public update(): void {
     if (this._element) {
-      this._renderer.updateEdgePath(this._element, this);
+      this._renderer.updateEdgePath(this._element, this, this.direction);
     }
   }
 

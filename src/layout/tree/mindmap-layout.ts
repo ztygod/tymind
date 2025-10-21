@@ -7,7 +7,7 @@ export class MindmapLayout extends BaseLayout {
 
     this._computeSubTreeHeight(rootNode);
 
-    const { width: viewportWidth, height: viewportHeight } = this.layoutOptions.viewport;
+    const { width: viewportWidth, height: viewportHeight } = this.layoutOptions.viewport!;
     const rootX =
       this.layoutOptions.direction === 'LR' ? viewportWidth / 4 : (viewportWidth * 3) / 4;
     const rootY = viewportHeight / 2;
@@ -25,7 +25,7 @@ export class MindmapLayout extends BaseLayout {
 
   /** Center overall */
   protected postprocess(): void {
-    const { width: viewportWidth, height: viewportHeight } = this.layoutOptions.viewport;
+    const { width: viewportWidth, height: viewportHeight } = this.layoutOptions.viewport!;
     if (!this.nodes || this.nodes.size === 0) return;
 
     let minX = Infinity,

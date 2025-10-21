@@ -101,9 +101,17 @@ const sampleMindMapData: NodeData = {
 MindMapCreate({
   container: document.querySelector<HTMLDivElement>('#main')!,
   data: sampleMindMapData,
-  graphOptions: {
+  graphStyle: {
     grid: {
       type: 'dot',
     },
+  },
+  edgeStyle: {
+    type: 'bezier',
+    color: 'black',
+  },
+  layoutOptions: {
+    layoutType: 'mindmap',
+    direction: 'LR',
   },
 });

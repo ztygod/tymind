@@ -1,27 +1,49 @@
 {
   "name": "tymind",
-  "version": "0.1.0",
+  "version": "0.0.1",
+  "type": "module",
   "description": "A mind map library built with TypeScript",
   "keywords": [
     "typescript",
     "mind map",
     "library"
   ],
-  "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "author": {
+    "name": "tianyiiiii",
+    "email": "2739022972@qq.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ztygod/tymind"
+  },
+  "homepage": "https://github.com/ztygod/tymind",
+  "bugs": {
+    "url": "https://github.com/ztygod/tymind/issues"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint \"src/**/*.ts\"",
     "format": "prettier --write .",
     "test": "vitest run",
-    "prepare": "husky"
+    "prepare": "husky",
+    "build": "vite build && tsc",
+    "prepublishOnly": "pnpm run build",
+    "release": "standard-version"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

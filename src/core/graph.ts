@@ -1,14 +1,16 @@
 import { LayoutManager } from '../layout/layout-manager';
-import type { EdgeStyleConfig, GraphOptions, NodeData } from '../type';
+import type { EdgeStyle, EdgeStyleConfig, GraphOptions, NodeData } from '../type';
 import { Edge } from './edge';
 import { Node } from './node';
 import { Renderer } from '../renderer/renderer';
+import type { LayoutOptions } from '../layout/type';
 
 interface GraphInitOptions {
   container: HTMLDivElement;
   data: NodeData;
-  graphOptions?: GraphOptions;
-  defaultEdgeStyle?: EdgeStyleConfig;
+  graphStyle?: GraphOptions;
+  edgeStyle?: EdgeStyleConfig;
+  layoutOptions?: LayoutOptions;
 }
 
 export class Graph {
@@ -16,59 +18,89 @@ export class Graph {
   public height;
   public grid;
   public background;
+  public edgeStyle: EdgeStyleConfig;
+  public layoutOptions: LayoutOptions;
 
   private _renderer: Renderer;
   private _nodes: Map<string, Node> = new Map();
   private _edges: Map<string, Edge> = new Map();
 
   constructor(options: GraphInitOptions) {
+    const defaultEdgeStyle: EdgeStyleConfig = {
+      type: 'straight',
+      color: 'rgb(0,0,0)',
+      width: 1,
+      style: 'solid',
+      arrow: 'none',
+      label: '',
+      labelStyle: {
+        fontSize: 10,
+        fontColor: 'rgb(0,0,0)',
+        background: 'rgb(230,230,230)',
+      },
+    };
+
+    const defaultLayoutOptions: LayoutOptions = {
+      layoutType: 'mindmap',
+      viewport: { width: 800, height: 600 },
+      direction: 'LR',
+      nodeHorizontalGap: 80,
+      nodeVerticalGap: 20,
+      preventOverlap: true,
+      animate: false,
+    };
+
+    const defaultGraphStyle = {
+      width: 800,
+      height: 600,
+      grid: false,
+      background: '#f2f7fa',
+    };
+
     const {
       container,
       data,
-      graphOptions,
-      defaultEdgeStyle = {
-        type: 'bezier',
-        color: 'rgb(0,0,0)',
-        width: 1,
-        style: 'solid',
-        arrow: 'end',
-        label: '',
-        labelStyle: {
-          fontSize: 10,
-          fontColor: 'rgb(0,0,0)',
-          background: 'rgb(230,230,230)',
-        },
-      },
+      graphStyle = {},
+      edgeStyle = {},
+      layoutOptions = {} as Partial<LayoutOptions>,
     } = options;
-
-    const opts = {
-      width: graphOptions?.width || 800,
-      height: graphOptions?.height || 600,
-      grid: graphOptions?.grid || false,
-      background: graphOptions?.background || '#f2f7fa',
+    const mergedGraphStyle = { ...defaultGraphStyle, ...graphStyle };
+    const mergedEdgeStyle = { ...defaultEdgeStyle, ...edgeStyle };
+    const mergedLayoutOptions: LayoutOptions = {
+      ...defaultLayoutOptions,
+      ...layoutOptions,
+      viewport: {
+        ...defaultLayoutOptions.viewport!,
+        ...layoutOptions.viewport!,
+      },
     };
 
-    this.width = opts.width;
-    this.height = opts.height;
-    this.grid = opts.grid;
-    this.background = opts.background;
+    this.width = mergedGraphStyle.width;
+    this.height = mergedGraphStyle.height;
+    this.grid = mergedGraphStyle.grid;
+    this.background = mergedGraphStyle.background;
+    this.edgeStyle = mergedEdgeStyle;
+    this.layoutOptions = mergedLayoutOptions;
+
+    this.layoutOptions.viewport!.width = this.width;
+    this.layoutOptions.viewport!.height = this.height;
 
     // Init background (grid) in the Renderer, while providing rendering API
-    this._renderer = new Renderer(container, opts);
+    this._renderer = new Renderer(container, mergedGraphStyle);
 
     // Init Node, Edge and load data
-    this.loadData(data, defaultEdgeStyle);
+    this.loadData(data);
   }
 
-  public loadData(rootNode: NodeData, defaultEdgeStyle?: EdgeStyleConfig): void {
+  public loadData(rootNode: NodeData): void {
     // Clean old data
     this._clean();
 
     // Create Instance ( Nodes and Edges )
-    this._createInstancesFromData(rootNode, defaultEdgeStyle);
+    this._createInstancesFromData(rootNode, this.edgeStyle);
 
     // Use layout algorithms to calculate the position of each node
-    this._applyLayout();
+    this._applyLayout(this.layoutOptions);
 
     // Draw all instances
     this._drawAll();
@@ -94,6 +126,7 @@ export class Graph {
           id: `edge-${parentNodeInstance.id}-${currentNodeData.id}`,
           source: parentNodeInstance,
           target: newNodeInstance,
+          direction: this.layoutOptions.direction!,
           ...defaultEdgeStyle,
         };
 
@@ -111,17 +144,10 @@ export class Graph {
     traverse(rootNode, null, 0);
   }
 
-  private _applyLayout(layoutName: string = 'mindmap'): void {
-    const layoutOptions = {
-      /** TODO */
-    };
+  private _applyLayout(layoutOptions: LayoutOptions): void {
+    const { layoutType } = layoutOptions;
 
-    const layout = LayoutManager.getLayout(
-      layoutName,
-      this._nodes,
-      this._edges
-      // layoutOptions
-    );
+    const layout = LayoutManager.getLayout(layoutType, this._nodes, this._edges, layoutOptions);
 
     if (layout) {
       /** Calculate the layout and coordinates of each node and edge */
