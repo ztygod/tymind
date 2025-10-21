@@ -1,0 +1,62 @@
+# .github/workflows/release.yml
+
+name: Release and Publish
+
+# 触发条件：当一个新的 tag (例如 v1.0.0) 被推送到仓库时
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+' # 匹配 vX.Y.Z 格式的 tag
+
+jobs:
+  release:
+    name: Create Release and Publish to NPM
+    runs-on: ubuntu-latest # 使用最新的 Ubuntu 虚拟机
+
+    steps:
+      # 步骤 1: 检出代码
+      # 使用 persist-credentials: false 是因为我们后面会用自己的 token
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # 步骤 2: 设置 Node.js 环境
+      # 这里我们使用 pnpm，它更快且能更好地处理 workspace
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8 # 使用 pnpm 版本 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # 使用 Node.js 20
+          cache: 'pnpm' # 缓存 pnpm 的依赖，加快后续构建速度
+          registry-url: 'https://registry.npmjs.org' # 指定要发布的 NPM 仓库地址
+
+      # 步骤 3: 安装依赖
+      - name: Install dependencies
+        run: pnpm install
+
+      # 步骤 4: 构建项目
+      # 这里的构建命令会由 prepublishOnly 钩子自动触发 ，但显式写出来更清晰
+      - name: Build project
+        run: pnpm build
+
+      # 步骤 5: 发布到 NPM
+      # 使用 secrets.NPM_TOKEN 来进行认证
+      - name: Publish to NPM
+        run: pnpm publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # 步骤 6: 创建 GitHub Release
+      # 使用我们之前讨论的 standard-version 工具来自动生成 Release Notes
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          # 从 CHANGELOG.md 中提取对应版本的更新内容
+          body_path: CHANGELOG.md
+          # 告诉 action-gh-release 这是预格式化的内容
+          prerelease: false
