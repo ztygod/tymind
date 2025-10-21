@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.4](https://github.com/ztygod/tymind/compare/v0.0.3...v0.0.4) (2025-10-21)
+
+### Features
+
+- add github actions ([04592f6](https://github.com/ztygod/tymind/commit/04592f65b565eca1f0e56d52b1216e331687c454))
+
 ### [0.0.3](https://github.com/ztygod/tymind/compare/v0.0.1...v0.0.3) (2025-10-21)
 
 ### Features
