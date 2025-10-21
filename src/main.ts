@@ -1,17 +1,9 @@
 import { MindMapCreate } from '.';
 import type { NodeData } from './type';
-import typescriptLogo from './typescript.svg';
-import viteLogo from '/vite.svg';
 import './style.css';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
     <h1> TYmind Display </h1>
     <div id="main"></div>
   </div>
