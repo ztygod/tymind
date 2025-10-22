@@ -11,7 +11,6 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 const sampleMindMapData: NodeData = {
   id: 'n1',
   label: '中心主题',
-  shape: 'rect',
   size: {
     width: 120,
     height: 50,
@@ -37,36 +36,30 @@ const sampleMindMapData: NodeData = {
         {
           id: 'n3',
           label: '子节点 A',
-          shape: 'rect',
         },
         {
           id: 'n4',
           label: '子节点 B',
-          shape: 'rect',
           children: [
             {
               id: 'n4-1',
               label: '子节点 B-1',
-              shape: 'rect',
             },
             {
               id: 'n4-2',
               label: '子节点 B-2',
-              shape: 'rect',
             },
           ],
         },
         {
           id: 'n5',
           label: '子节点 C',
-          shape: 'rect',
         },
       ],
     },
     {
       id: 'n6',
       label: '分支 2',
-      shape: 'rect',
       children: [
         {
           id: 'n6-1',
@@ -81,7 +74,6 @@ const sampleMindMapData: NodeData = {
     {
       id: 'n7',
       label: '分支 3',
-      shape: 'rect',
     },
   ],
   data: {
@@ -99,7 +91,7 @@ MindMapCreate({
     },
   },
   edgeStyle: {
-    type: 'bezier',
+    // type: 'bezier',
     color: 'black',
   },
   layoutOptions: {

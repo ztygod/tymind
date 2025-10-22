@@ -4,8 +4,10 @@ import type {
   GraphOptions,
   GridConfig,
   MeshGridConfig,
+  NodeData,
   NodeShape,
   NodeStyle,
+  ShapeSize,
 } from '../type';
 import type { Edge } from '../core/edge';
 import { Node } from '../core/node';
@@ -115,17 +117,24 @@ export class Renderer {
     }
   }
 
-  public drawNode(node: Node): SVGGElement {
+  public drawNode<T extends NodeData>(node: Node<T>): SVGGElement {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     g.setAttribute('class', 'graph-node');
 
     const { label, shape = 'rect', size, position, style } = node;
-    const { width = 100, height = 40 } = size ?? { width: 100, height: 40 };
     const { x = 0, y = 0 } = position ?? { x: 0, y: 0 };
 
-    // Create shape and label text
-    const shapeEl = this.createShape(shape, width, height, style);
-    const textEl = this.createText(label, width, height, style);
+    const shapeEl = this.createShape(
+      shape as NonNullable<T['shape']>,
+      size as ShapeSize<NonNullable<T['shape']>>,
+      style
+    );
+    const textEl = this.createText(
+      label,
+      shape as NonNullable<T['shape']>,
+      size as ShapeSize<NonNullable<T['shape']>>,
+      style
+    );
 
     const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     wrapper.setAttribute('transform', `translate(${x}, ${y})`);
@@ -346,66 +355,20 @@ export class Renderer {
     this.svgRoot.insertBefore(rect, this.mainLayer);
   }
 
-  private createShape(
-    shape: NodeShape,
-    width: number,
-    height: number,
+  private createShape<S extends NodeShape>(
+    shape: S,
+    size: ShapeSize<S>,
     style?: NodeStyle
   ): SVGElement {
-    const ns = 'http://www.w3.org/2000/svg';
-    const stroke = style?.borderColor ?? '#666';
-    const strokeWidth = style?.borderWidth ?? 1.5;
-    const fill = style?.background ?? '#ffffff';
-
-    let shapeEl: SVGElement;
-
-    switch (shape) {
-      case 'rect': {
-        shapeEl = document.createElementNS(ns, 'rect');
-        shapeEl.setAttribute('width', String(width));
-        shapeEl.setAttribute('height', String(height));
-        shapeEl.setAttribute('rx', '6');
-        shapeEl.setAttribute('ry', '6');
-        break;
-      }
-      case 'circle': {
-        shapeEl = document.createElementNS(ns, 'circle');
-        const r = Math.min(width, height) / 2;
-        shapeEl.setAttribute('r', String(r));
-        shapeEl.setAttribute('cx', String(r));
-        shapeEl.setAttribute('cy', String(r));
-        break;
-      }
-      case 'diamond': {
-        shapeEl = document.createElementNS(ns, 'polygon');
-        const points = [
-          `${width / 2},0`,
-          `${width},${height / 2}`,
-          `${width / 2},${height}`,
-          `0,${height / 2}`,
-        ].join(' ');
-        shapeEl.setAttribute('points', points);
-        break;
-      }
-      case 'ellipse': {
-        shapeEl = document.createElementNS(ns, 'ellipse');
-        shapeEl.setAttribute('cx', String(width));
-        shapeEl.setAttribute('cy', String(height));
-        shapeEl.setAttribute('rx', String(width / 2));
-        shapeEl.setAttribute('ry', String(height / 2));
-        break;
-      }
-      default:
-        throw new Error(`Unsupported shape: ${shape}`);
-    }
-
-    shapeEl.setAttribute('fill', fill);
-    shapeEl.setAttribute('stroke', stroke);
-    shapeEl.setAttribute('stroke-width', String(strokeWidth));
-    return shapeEl;
+    return this.shapeRenderers[shape](size, style);
   }
 
-  private createText(label: string, width: number, height: number, style?: NodeStyle) {
+  private createText<S extends NodeShape>(
+    label: string,
+    shape: S,
+    size: ShapeSize<S>,
+    style?: NodeStyle
+  ): SVGTextElement {
     const ns = 'http://www.w3.org/2000/svg';
     const textEl = document.createElementNS(ns, 'text');
     textEl.textContent = label ?? '';
@@ -413,8 +376,11 @@ export class Renderer {
     const fontSize = style?.fontSize ?? 14;
     const fontColor = style?.fontColor ?? '#333';
 
-    textEl.setAttribute('x', String(width / 2));
-    textEl.setAttribute('y', String(height / 2 + fontSize / 3));
+    // 计算中心点
+    const { x, y } = this.getTextCenter[shape](size, fontSize);
+
+    textEl.setAttribute('x', String(x));
+    textEl.setAttribute('y', String(y));
     textEl.setAttribute('text-anchor', 'middle');
     textEl.setAttribute('font-size', String(fontSize));
     textEl.setAttribute('fill', fontColor);
@@ -423,4 +389,74 @@ export class Renderer {
 
     return textEl;
   }
+
+  private shapeRenderers: {
+    [S in NodeShape]: (size: ShapeSize<S>, style?: NodeStyle) => SVGElement;
+  } = {
+    rect: (size, style) => {
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('width', String(size.width));
+      rect.setAttribute('height', String(size.height));
+      rect.setAttribute('rx', '6');
+      rect.setAttribute('ry', '6');
+      this.applyStyle(rect, style);
+      return rect;
+    },
+    circle: (size, style) => {
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('r', String(size.radius));
+      circle.setAttribute('cx', String(size.radius));
+      circle.setAttribute('cy', String(size.radius));
+      this.applyStyle(circle, style);
+      return circle;
+    },
+    diamond: (size, style) => {
+      const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      const points = [
+        `${size.width / 2},0`,
+        `${size.width},${size.height / 2}`,
+        `${size.width / 2},${size.height}`,
+        `0,${size.height / 2}`,
+      ].join(' ');
+      poly.setAttribute('points', points);
+      this.applyStyle(poly, style);
+      return poly;
+    },
+    ellipse: (size, style) => {
+      const ell = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+      ell.setAttribute('cx', String(size.rx));
+      ell.setAttribute('cy', String(size.ry));
+      ell.setAttribute('rx', String(size.rx));
+      ell.setAttribute('ry', String(size.ry));
+      this.applyStyle(ell, style);
+      return ell;
+    },
+  };
+
+  private applyStyle(el: SVGElement, style?: NodeStyle) {
+    el.setAttribute('fill', style?.background ?? '#fff');
+    el.setAttribute('stroke', style?.borderColor ?? '#666');
+    el.setAttribute('stroke-width', String(style?.borderWidth ?? 1.5));
+  }
+
+  private getTextCenter: {
+    [S in NodeShape]: (size: ShapeSize<S>, fontSize: number) => { x: number; y: number };
+  } = {
+    rect: (size, fontSize) => ({
+      x: size.width / 2,
+      y: size.height / 2 + fontSize / 3,
+    }),
+    diamond: (size, fontSize) => ({
+      x: size.width / 2,
+      y: size.height / 2 + fontSize / 3,
+    }),
+    circle: (size, fontSize) => ({
+      x: size.radius,
+      y: size.radius + fontSize / 3,
+    }),
+    ellipse: (size, fontSize) => ({
+      x: size.rx,
+      y: size.ry + fontSize / 3,
+    }),
+  };
 }

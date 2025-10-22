@@ -1,14 +1,14 @@
-import type { NodePosition, NodeShape, NodeSize, NodeStyle, NodeData } from '../type';
+import type { NodePosition, NodeStyle, NodeData } from '../type';
 import type { Edge } from './edge';
 import type { Renderer } from '../renderer/renderer';
 
-export class Node {
+export class Node<T extends NodeData = NodeData> {
   readonly id: string;
   label: string;
   level: number; /** Current node level */
   index: number; /** Current node inedx */
-  shape?: NodeShape;
-  size?: NodeSize;
+  shape?: T['shape'];
+  size?: T['size'];
   style?: NodeStyle;
   position?: NodePosition = { x: 0, y: 0 };
   collapsed?: boolean;

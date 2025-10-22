@@ -1,5 +1,5 @@
 import { LayoutManager } from '../layout/layout-manager';
-import type { EdgeStyle, EdgeStyleConfig, GraphOptions, NodeData } from '../type';
+import type { EdgeStyleConfig, GraphOptions, NodeData } from '../type';
 import { Edge } from './edge';
 import { Node } from './node';
 import { Renderer } from '../renderer/renderer';

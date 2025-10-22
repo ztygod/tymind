@@ -108,18 +108,24 @@ export type GridConfig = DotGridConfig | MeshGridConfig | DoubleMeshConfig;
 /**
  * Structure of a single node in the mind map.
  */
-export interface NodeData {
-  /** Unique identifier of the node */
+export type NodeData = RectNodeData | CircleNodeData | DiamondNodeData | EllipseNodeData;
+
+export type NodeShape = NonNullable<NodeData['shape']>;
+
+export type ShapeSize<S extends NodeShape> = S extends 'rect' | 'diamond'
+  ? { width: number; height: number }
+  : S extends 'circle'
+    ? { radius: number }
+    : S extends 'ellipse'
+      ? { rx: number; ry: number }
+      : never;
+
+/** 基础结构（公共部分） */
+interface BaseNodeData {
   id: string;
 
   /** Display label or text shown inside the node */
   label: string;
-
-  /** Shape of the node */
-  shape?: NodeShape;
-
-  /** Size configuration of the node */
-  size?: NodeSize;
 
   /** Style settings (e.g., border, font, background) */
   style?: NodeStyle;
@@ -137,11 +143,39 @@ export interface NodeData {
   data?: Record<string, any>;
 }
 
-export type NodeShape = 'rect' | 'circle' | 'diamond' | 'ellipse';
+/** Rect Node */
+export interface RectNodeData extends BaseNodeData {
+  shape?: 'rect';
+  size?: {
+    width: number;
+    height: number;
+  };
+}
 
-export interface NodeSize {
-  width: number;
-  height: number;
+/** Circle Node */
+export interface CircleNodeData extends BaseNodeData {
+  shape?: 'circle';
+  size?: {
+    radius: number;
+  };
+}
+
+/** Diamond Node */
+export interface DiamondNodeData extends BaseNodeData {
+  shape?: 'diamond';
+  size?: {
+    width: number;
+    height: number;
+  };
+}
+
+/** Ellipse Node */
+export interface EllipseNodeData extends BaseNodeData {
+  shape?: 'ellipse';
+  size?: {
+    rx: number;
+    ry: number;
+  };
 }
 
 export interface NodePosition {
@@ -205,4 +239,10 @@ export interface EdgeLabelStyle {
   fontSize?: number;
   fontColor?: string;
   background?: string;
+}
+
+/** The intersection of the connection line and the node */
+export interface AnchorPoint {
+  x: number;
+  y: number;
 }
