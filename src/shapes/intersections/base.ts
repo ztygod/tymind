@@ -3,9 +3,9 @@ import { AnchorPoint } from '../../type';
 
 export abstract class IntersectionCalculator<TNode extends Node = Node> {
   protected EPS = 1e-9;
-  protected abstract getIntersection(parentNode: TNode, childNode: TNode): AnchorPoint;
+  protected abstract getIntersection(parentNode: TNode, childNode: Node): AnchorPoint;
 
-  protected _getCenterPoint(node: TNode): AnchorPoint {
+  protected _getCenterPoint(node: TNode | Node): AnchorPoint {
     if (!node.position || !node.size) {
       throw new Error(`Node ${node.id} missing position or size`);
     }

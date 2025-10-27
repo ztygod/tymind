@@ -2,11 +2,8 @@ import { Node } from '../../core/node';
 import { AnchorPoint, EllipseNodeData } from '../../type';
 import { IntersectionCalculator } from './base';
 
-export class Ellipse extends IntersectionCalculator<Node<EllipseNodeData>> {
-  protected getIntersection(
-    parentNode: Node<EllipseNodeData>,
-    childNode: Node<EllipseNodeData>
-  ): AnchorPoint {
+export class EllipseIntersections extends IntersectionCalculator<Node<EllipseNodeData>> {
+  public getIntersection(parentNode: Node<EllipseNodeData>, childNode: Node): AnchorPoint {
     const parentCenter = this._getCenterPoint(parentNode);
     const childCenter = this._getCenterPoint(childNode);
 

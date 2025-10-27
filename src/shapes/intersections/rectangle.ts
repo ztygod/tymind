@@ -3,10 +3,7 @@ import { AnchorPoint, RectNodeData } from '../../type';
 import { IntersectionCalculator } from './base';
 
 export class RectangleIntersections extends IntersectionCalculator<Node<RectNodeData>> {
-  protected getIntersection(
-    parentNode: Node<RectNodeData>,
-    childNode: Node<RectNodeData>
-  ): AnchorPoint {
+  public getIntersection(parentNode: Node<RectNodeData>, childNode: Node): AnchorPoint {
     const parentCenter = this._getCenterPoint(parentNode);
     const childCenter = this._getCenterPoint(childNode);
 

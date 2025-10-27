@@ -3,10 +3,7 @@ import { AnchorPoint, DiamondNodeData } from '../../type';
 import { IntersectionCalculator } from './base';
 
 export class DiamondIntersections extends IntersectionCalculator<Node<DiamondNodeData>> {
-  protected getIntersection(
-    parentNode: Node<DiamondNodeData>,
-    childNode: Node<DiamondNodeData>
-  ): AnchorPoint {
+  public getIntersection(parentNode: Node<DiamondNodeData>, childNode: Node): AnchorPoint {
     const parentCenter = this._getCenterPoint(parentNode);
     const childCenter = this._getCenterPoint(childNode);
 
@@ -23,7 +20,7 @@ export class DiamondIntersections extends IntersectionCalculator<Node<DiamondNod
 
     // Rhombus standard equation:
     // |x/a| + |y/b| = 1
-    // 代入 x = t*dx, y = t*dy
+    // Substitute x = t*dx, y = t*dy
     // => |t*dx/a| + |t*dy/b| = 1
     // => t * (|dx|/a + |dy|/b) = 1
     // => t = 1 / (|dx|/a + |dy|/b)
