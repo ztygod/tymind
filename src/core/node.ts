@@ -90,6 +90,14 @@ export class Node<T extends NodeData = NodeData> {
     }
   }
 
+  public getPositionX(): number {
+    return this.position?.x ?? 0;
+  }
+
+  public getPositionY(): number {
+    return this.position?.y ?? 0;
+  }
+
   /** Methods for managing edge relationships */
   public addIncomingEdge(edge: Edge): void {
     this.incomingEdges.push(edge);

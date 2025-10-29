@@ -1,4 +1,4 @@
-import type { AnchorPoint } from '../connector';
+import { AnchorPoint } from '../../type';
 
 export abstract class BaseRouter {
   /**

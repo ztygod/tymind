@@ -13,13 +13,13 @@ interface GraphInitOptions {
   layoutOptions?: LayoutOptions;
 }
 
-export class Graph {
+export class Graph<T extends LayoutOptions['layoutType'] = LayoutOptions['layoutType']> {
   public width;
   public height;
   public grid;
   public background;
   public edgeStyle: EdgeStyleConfig;
-  public layoutOptions: LayoutOptions;
+  public layoutOptions: Extract<LayoutOptions, { layoutType: T }>;
 
   private _renderer: Renderer;
   private _nodes: Map<string, Node> = new Map();
@@ -27,7 +27,7 @@ export class Graph {
 
   constructor(options: GraphInitOptions) {
     const defaultEdgeStyle: EdgeStyleConfig = {
-      type: 'straight',
+      type: 'bezier',
       color: 'rgb(0,0,0)',
       width: 1,
       style: 'solid',
@@ -40,15 +40,13 @@ export class Graph {
       },
     };
 
-    const defaultLayoutOptions: LayoutOptions = {
-      layoutType: 'mindmap',
+    const defaultLayoutOptions: Extract<LayoutOptions, { layoutType: T }> = {
+      layoutType: options.layoutOptions?.layoutType as T,
       viewport: { width: 800, height: 600 },
       direction: 'LR',
       nodeHorizontalGap: 80,
       nodeVerticalGap: 20,
-      preventOverlap: true,
-      animate: false,
-    };
+    } as any;
 
     const defaultGraphStyle = {
       width: 800,
@@ -62,11 +60,11 @@ export class Graph {
       data,
       graphStyle = {},
       edgeStyle = {},
-      layoutOptions = {} as Partial<LayoutOptions>,
+      layoutOptions = {} as Partial<Extract<LayoutOptions, { layoutType: T }>>,
     } = options;
     const mergedGraphStyle = { ...defaultGraphStyle, ...graphStyle };
     const mergedEdgeStyle = { ...defaultEdgeStyle, ...edgeStyle };
-    const mergedLayoutOptions: LayoutOptions = {
+    const mergedLayoutOptions: Extract<LayoutOptions, { layoutType: T }> = {
       ...defaultLayoutOptions,
       ...layoutOptions,
       viewport: {

@@ -6,7 +6,7 @@ export class Edge {
   readonly id: string;
   readonly source: Node;
   readonly target: Node;
-  readonly direction: 'LR' | 'RL';
+  readonly direction: 'LR' | 'RL' | 'TB' | 'BT';
   type?: EdgeType;
   color?: string;
   width?: number;
@@ -20,9 +20,12 @@ export class Edge {
   private _element: SVGGElement | null = null;
 
   constructor(
-    data: { id: string; source: Node; target: Node; direction: 'LR' | 'RL' } & Partial<
-      Omit<EdgeData, 'id' | 'source' | 'target'>
-    >,
+    data: {
+      id: string;
+      source: Node;
+      target: Node;
+      direction: 'LR' | 'RL' | 'TB' | 'BT';
+    } & Partial<Omit<EdgeData, 'id' | 'source' | 'target'>>,
     renderer: Renderer
   ) {
     this.id = data.id;

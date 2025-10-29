@@ -1,8 +1,8 @@
 import { Graph } from './core/graph';
-import { ForceLayout } from './layout/force/force-layout';
+import { ForceLayout } from './layout/layout-algorithm/force-layout';
 import { LayoutManager } from './layout/layout-manager';
-import { MindmapLayout } from './layout/tree/mindmap-layout';
-import { TreeLayout } from './layout/tree/tree-layout';
+import { MindmapLayout } from './layout/layout-algorithm/mindmap-layout';
+import { TreeLayout } from './layout/layout-algorithm/tree-layout';
 import type { MindMapOptions, NodeData } from './type';
 
 LayoutManager.register('tree', TreeLayout);
@@ -27,47 +27,25 @@ export function MindMapCreate(
 ): Graph {
   let options: MindMapOptions;
 
-  // Normalize parameters
   if (typeof arg1 === 'string' || arg1 instanceof HTMLDivElement) {
-    if (!arg2) {
-      throw new Error(`[MindMapCreate] Missing required "data" parameter.`);
-    }
+    if (!arg2) throw new Error(`[MindMapCreate] Missing required "data" parameter.`);
     options = { container: arg1, data: arg2 };
   } else {
     options = arg1;
   }
 
-  // Validate container
   const containerEl = resolveContainer(options.container);
-  if (!containerEl) {
-    throw new Error(
-      `[MindMapCreate] Invalid container: ${
-        typeof options.container === 'string' ? `"${options.container}"` : 'HTMLElement'
-      }`
-    );
-  }
+  if (!containerEl) throw new Error(`[MindMapCreate] Invalid container.`);
 
-  // Validate data
   if (!options.data || typeof options.data !== 'object') {
     throw new Error(`[MindMapCreate] "data" must be a valid Node object.`);
   }
 
-  // Initialize Graph
   const { graphStyle, data, edgeStyle, layoutOptions } = options;
-  const graphInstance = new Graph({
-    container: containerEl,
-    data,
-    graphStyle,
-    edgeStyle,
-    layoutOptions,
-  });
 
-  return graphInstance;
+  return new Graph({ container: containerEl, data, graphStyle, edgeStyle, layoutOptions });
 }
 
-/**
- * Resolve DOM container element by selector or direct reference.
- */
 function resolveContainer(container: string | HTMLDivElement): HTMLDivElement | null {
   if (typeof container === 'string') {
     const el = document.querySelector(container);

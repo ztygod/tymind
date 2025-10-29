@@ -1,4 +1,4 @@
-import type { AnchorPoint } from '../connector';
+import { AnchorPoint } from '../../type';
 import { BaseRouter } from './base-router';
 
 export class BezierRouter extends BaseRouter {

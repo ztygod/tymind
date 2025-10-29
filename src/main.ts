@@ -95,7 +95,9 @@ MindMapCreate({
     color: 'black',
   },
   layoutOptions: {
-    layoutType: 'mindmap',
-    direction: 'LR',
+    layoutType: 'tree',
+    treeType: 'right',
+    direction: 'BT',
+    nodeVerticalGap: 10,
   },
 });

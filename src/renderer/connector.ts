@@ -20,7 +20,7 @@ export class BaseConnector {
   public getEdgesEndPoints(
     parentNode: Node,
     childrenNode: Node,
-    direction: 'LR' | 'RL'
+    direction: 'LR' | 'RL' | 'TB' | 'BT'
   ): { sourcePoint: AnchorPoint; targetPoint: AnchorPoint } {
     const sourceCalculator = getIntersectionCalculator(parentNode.shape!);
     const sourcePoint = sourceCalculator.getIntersection(parentNode as Node<any>, childrenNode);

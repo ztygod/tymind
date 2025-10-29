@@ -147,7 +147,7 @@ export class Renderer {
     return g;
   }
 
-  public drawEdge(edge: Edge, direction: 'LR' | 'RL'): SVGGElement {
+  public drawEdge(edge: Edge, direction: 'LR' | 'RL' | 'TB' | 'BT'): SVGGElement {
     console.log('begin');
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     g.setAttribute('id', edge.id);
@@ -170,7 +170,11 @@ export class Renderer {
   public updateNodePosition(element: SVGGElement, x: number, y: number): void {}
 
   /** Update Edge Position */
-  public updateEdgePath(element: SVGGElement, edge: Edge, direction: 'RL' | 'LR'): void {
+  public updateEdgePath(
+    element: SVGGElement,
+    edge: Edge,
+    direction: 'LR' | 'RL' | 'TB' | 'BT'
+  ): void {
     const pathEl = element.querySelector(`#path-${edge.id}`);
     if (!pathEl) return;
 
