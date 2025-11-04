@@ -3,7 +3,7 @@ import { AnchorPoint, RectNodeData } from '../../type';
 import { IntersectionCalculator } from './base';
 
 export class RectangleIntersections extends IntersectionCalculator<Node<RectNodeData>> {
-  public getIntersection(parentNode: Node<RectNodeData>, childNode: Node): AnchorPoint {
+  public getIntersectionInMindmap(parentNode: Node<RectNodeData>, childNode: Node): AnchorPoint {
     const parentCenter = this._getCenterPoint(parentNode);
     const childCenter = this._getCenterPoint(childNode);
 
@@ -72,5 +72,22 @@ export class RectangleIntersections extends IntersectionCalculator<Node<RectNode
     });
 
     return { x: hits[0].x, y: hits[0].y };
+  }
+
+  public getIntersectionInTree(
+    parentNode: Node<RectNodeData>,
+    direction: 'LR' | 'RL' | 'TB' | 'BT'
+  ): AnchorPoint {
+    if (direction === 'TB') {
+      return {
+        x: parentNode.position!.x + parentNode.size!.width / 2,
+        y: parentNode.position!.y + parentNode.size!.height,
+      };
+    } else {
+      return {
+        x: parentNode.position!.x + parentNode.size!.width / 2,
+        y: parentNode.position!.y,
+      };
+    }
   }
 }

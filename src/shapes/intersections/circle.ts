@@ -3,7 +3,7 @@ import { AnchorPoint, CircleNodeData } from '../../type';
 import { IntersectionCalculator } from './base';
 
 export class CircleIntersections extends IntersectionCalculator<Node<CircleNodeData>> {
-  public getIntersection(parentNode: Node<CircleNodeData>, childNode: Node): AnchorPoint {
+  public getIntersectionInMindmap(parentNode: Node<CircleNodeData>, childNode: Node): AnchorPoint {
     const parentCenter = this._getCenterPoint(parentNode);
     const childCenter = this._getCenterPoint(childNode);
 
@@ -26,5 +26,12 @@ export class CircleIntersections extends IntersectionCalculator<Node<CircleNodeD
       x: parentCenter.x + t * dx,
       y: parentCenter.y + t * dy,
     };
+  }
+
+  public getIntersectionInTree(
+    parentNode: Node<CircleNodeData>,
+    direction: 'LR' | 'RL' | 'TB' | 'BT'
+  ): AnchorPoint {
+    throw new Error('Method not implemented.');
   }
 }

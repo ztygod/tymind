@@ -26,7 +26,7 @@ export interface MindMapLayoutOptions extends BaseLayoutOptions {
    * - TB: Top to Bottom
    * - BT: Bottom to Top
    */
-  direction?: 'LR' | 'RL';
+  direction?: 'LR' | 'RL' | 'TB' | 'BT';
 }
 
 export interface ForceLayoutOptions extends BaseLayoutOptions {

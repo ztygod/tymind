@@ -6,6 +6,7 @@ export class MindmapLayout extends BaseLayout {
     if (!this.nodes || this.nodes.size === 0) return;
 
     this._computeSubTreeHeight(rootNode);
+    this._computeSubTreeWidth(rootNode);
 
     const { width: viewportWidth, height: viewportHeight } = this.layoutOptions.viewport!;
     const rootX =
@@ -13,7 +14,11 @@ export class MindmapLayout extends BaseLayout {
     const rootY = viewportHeight / 2;
     rootNode.setPosition(rootX, rootY);
 
-    this._assignCoordinates(rootNode, 0);
+    if (this.layoutOptions.direction === 'LR' || this.layoutOptions.direction === 'RL') {
+      this._assignCoordinatesInHorizontal(rootNode, 0);
+    } else {
+      this._assignCoordinatesInVertical(rootNode, 0);
+    }
   }
 
   protected preprocess(): void {
@@ -78,10 +83,29 @@ export class MindmapLayout extends BaseLayout {
     node.layoutProps.subtreeHeight = Math.max(nodeHeight, totalChildrenHeight);
   }
 
+  private _computeSubTreeWidth(node: Node) {
+    const children = this._getChildren(node);
+    const nodeWidth = node.size?.width ?? 100;
+    const siblingGap = this.layoutOptions.nodeVerticalGap ?? 80;
+
+    if (children.length === 0) {
+      node.layoutProps.subtreeWidth = nodeWidth;
+    }
+
+    let totalChildWidth = 0;
+    for (const child of children) {
+      this._computeSubTreeWidth(child);
+      totalChildWidth += child.layoutProps.subtreeWidth!;
+    }
+
+    totalChildWidth += (children.length - 1) * siblingGap;
+    node.layoutProps.subtreeWidth = Math.max(nodeWidth, totalChildWidth);
+  }
+
   /**
    * Top-down traversal: Calculate node coordinates
    */
-  private _assignCoordinates(node: Node, level: number): void {
+  private _assignCoordinatesInHorizontal(node: Node, level: number): void {
     const children = this._getChildren(node);
     if (children.length === 0) return;
 
@@ -110,8 +134,42 @@ export class MindmapLayout extends BaseLayout {
 
       child.setPosition(childX, childY);
 
-      this._assignCoordinates(child, level + 1);
+      this._assignCoordinatesInHorizontal(child, level + 1);
       currentY += childSubtreeHeight + siblingGap;
+    }
+  }
+
+  private _assignCoordinatesInVertical(node: Node, level: number): void {
+    const children = this._getChildren(node);
+    if (children.length === 0) return;
+
+    const parentSize = {
+      width: node.size?.width ?? 100,
+      height: node.size?.height ?? 40,
+    };
+
+    const siblingGap = this.layoutOptions.nodeVerticalGap ?? 20;
+    const levelGap = this.layoutOptions.nodeHorizontalGap ?? 80;
+
+    const totalChildrenWidth = node.layoutProps.subtreeWidth!;
+
+    // 让整个子树在父节点水平居中
+    const parentCenterX = node.position!.x + parentSize.width / 2;
+    let currentX = parentCenterX - totalChildrenWidth / 2;
+
+    const direction = this.layoutOptions.direction === 'TB' ? 1 : -1;
+
+    for (const child of children) {
+      const childSubtreeWidth = child.layoutProps.subtreeWidth!;
+      const childX = currentX + (child.layoutProps.subtreeWidth! - (child.size?.width ?? 100)) / 2;
+
+      const effectiveGap = levelGap / Math.sqrt(1 + level);
+      const childY = node.position!.y + direction * (parentSize.height + effectiveGap);
+
+      child.setPosition(childX, childY);
+
+      this._assignCoordinatesInVertical(child, level + 1);
+      currentX += childSubtreeWidth + siblingGap;
     }
   }
 }

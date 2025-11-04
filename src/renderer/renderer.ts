@@ -14,6 +14,8 @@ import { Node } from '../core/node';
 import { BaseConnector } from './connector';
 import { StraightRouter } from './routers/straight-route';
 import { BezierRouter } from './routers/bezier-router';
+import { BrokenLine } from './routers/brokenLine-router';
+import { LayoutStore } from '../layout/layout-store';
 
 export class Renderer {
   private svgRoot: SVGSVGElement;
@@ -22,6 +24,7 @@ export class Renderer {
   private router: {
     straight: StraightRouter;
     bezier: BezierRouter;
+    'broken-line': BrokenLine;
   };
 
   constructor(container: HTMLDivElement, options: Required<GraphOptions>) {
@@ -34,6 +37,7 @@ export class Renderer {
     this.router = {
       straight: new StraightRouter(),
       bezier: new BezierRouter(),
+      'broken-line': new BrokenLine(),
     };
 
     this.svgRoot.appendChild(this.mainLayer);
@@ -189,7 +193,8 @@ export class Renderer {
     const { sourcePoint, targetPoint } = this.connector.getEdgesEndPoints(
       edge.source,
       edge.target,
-      direction
+      direction,
+      LayoutStore.layoutType
     );
 
     const pathD = router.getPathD(sourcePoint, targetPoint);

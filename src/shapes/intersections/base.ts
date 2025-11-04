@@ -3,7 +3,11 @@ import { AnchorPoint } from '../../type';
 
 export abstract class IntersectionCalculator<TNode extends Node = Node> {
   protected EPS = 1e-9;
-  protected abstract getIntersection(parentNode: TNode, childNode: Node): AnchorPoint;
+  protected abstract getIntersectionInMindmap(parentNode: TNode, childNode: Node): AnchorPoint;
+  protected abstract getIntersectionInTree(
+    parentNode: TNode,
+    direction: 'LR' | 'RL' | 'TB' | 'BT'
+  ): AnchorPoint;
 
   protected _getCenterPoint(node: TNode | Node): AnchorPoint {
     if (!node.position || !node.size) {

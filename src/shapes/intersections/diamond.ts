@@ -3,7 +3,7 @@ import { AnchorPoint, DiamondNodeData } from '../../type';
 import { IntersectionCalculator } from './base';
 
 export class DiamondIntersections extends IntersectionCalculator<Node<DiamondNodeData>> {
-  public getIntersection(parentNode: Node<DiamondNodeData>, childNode: Node): AnchorPoint {
+  public getIntersectionInMindmap(parentNode: Node<DiamondNodeData>, childNode: Node): AnchorPoint {
     const parentCenter = this._getCenterPoint(parentNode);
     const childCenter = this._getCenterPoint(childNode);
 
@@ -30,5 +30,12 @@ export class DiamondIntersections extends IntersectionCalculator<Node<DiamondNod
     const y = parentCenter.y + dy * t;
 
     return { x, y };
+  }
+
+  public getIntersectionInTree(
+    parentNode: Node<DiamondNodeData>,
+    direction: 'LR' | 'RL' | 'TB' | 'BT'
+  ): AnchorPoint {
+    throw new Error('Method not implemented.');
   }
 }

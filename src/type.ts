@@ -231,7 +231,7 @@ export interface EdgeStyleConfig {
   data?: Record<string, any>;
 }
 
-export type EdgeType = 'bezier' | 'straight';
+export type EdgeType = 'bezier' | 'straight' | 'broken-line';
 export type EdgeStyle = 'solid' | 'dashed' | 'dotted';
 export type EdgeArrow = 'none' | 'start' | 'end' | 'both';
 

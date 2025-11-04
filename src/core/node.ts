@@ -21,6 +21,8 @@ export class Node<T extends NodeData = NodeData> {
   layoutProps: {
     /** Subtree total height */
     subtreeHeight?: number;
+    /** Subtree total width */
+    subtreeWidth?: number;
     /** Y coordinate offset relative to the parent node */
     yOffset?: number;
     /** Correction value used to avoid subtree overlap */

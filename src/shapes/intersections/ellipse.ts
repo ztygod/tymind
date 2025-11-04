@@ -3,7 +3,7 @@ import { AnchorPoint, EllipseNodeData } from '../../type';
 import { IntersectionCalculator } from './base';
 
 export class EllipseIntersections extends IntersectionCalculator<Node<EllipseNodeData>> {
-  public getIntersection(parentNode: Node<EllipseNodeData>, childNode: Node): AnchorPoint {
+  public getIntersectionInMindmap(parentNode: Node<EllipseNodeData>, childNode: Node): AnchorPoint {
     const parentCenter = this._getCenterPoint(parentNode);
     const childCenter = this._getCenterPoint(childNode);
 
@@ -23,5 +23,12 @@ export class EllipseIntersections extends IntersectionCalculator<Node<EllipseNod
       x: parentCenter.x + t * dx,
       y: parentCenter.y + t * dy,
     };
+  }
+
+  public getIntersectionInTree(
+    parentNode: Node<EllipseNodeData>,
+    direction: 'LR' | 'RL' | 'TB' | 'BT'
+  ): AnchorPoint {
+    throw new Error('Method not implemented.');
   }
 }

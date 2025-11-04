@@ -1,66 +1,66 @@
 import type { Node } from '../core/node';
+import { LayoutStore } from '../layout/layout-store';
+import { LayoutOptions } from '../layout/type';
 import { getIntersectionCalculator } from '../shapes/registry';
-import {
-  AnchorPoint,
-  CircleNodeData,
-  DiamondNodeData,
-  EllipseNodeData,
-  RectNodeData,
-} from '../type';
+import { AnchorPoint } from '../type';
+import { isCircle, isEllipse, isRectOrDiamond } from './typeUtils';
 
 /**
- * BaseConnector is responsible for calculating the anchor points of connections between nodes.
- * Can be extended to different styles (straight line, curve, polyline, etc.)
+ * BaseConnector 负责计算节点之间连接的锚点。
+ * 可以扩展为不同的样式（直线、曲线、折线等）
  */
 export class BaseConnector {
-  /**
-   * Calculate the start and end coordinates of the line connecting the parent node and child node.
-   * Direction controls the connection direction (LR or RL)
-   */
   public getEdgesEndPoints(
     parentNode: Node,
     childrenNode: Node,
-    direction: 'LR' | 'RL' | 'TB' | 'BT'
+    direction: 'LR' | 'RL' | 'TB' | 'BT',
+    layout: LayoutOptions['layoutType']
   ): { sourcePoint: AnchorPoint; targetPoint: AnchorPoint } {
     const sourceCalculator = getIntersectionCalculator(parentNode.shape!);
-    const sourcePoint = sourceCalculator.getIntersection(parentNode as Node<any>, childrenNode);
+    const { position, shape, size } = childrenNode;
 
-    const { position, shape } = childrenNode;
     if (!position) throw new Error('childNode.position is missing');
+    if (!size) throw new Error('childNode.size is missing');
 
-    const calcX = (offset: number) => (direction === 'LR' ? position.x : position.x + offset);
+    // 根据 layout 和 direction 计算 x,y 偏移
+    const offsetX = (val: number) =>
+      layout === 'tree'
+        ? LayoutStore.treeType === 'right'
+          ? position.x
+          : position.x + val
+        : direction === 'LR'
+          ? position.x
+          : direction === 'RL'
+            ? position.x + val
+            : position.x + val / 2;
 
-    let targetPoint: AnchorPoint;
+    const offsetY = (val: number) =>
+      layout === 'mindmap'
+        ? position.y + val
+        : direction === 'TB'
+          ? position.y + val
+          : position.y + val;
 
-    switch (shape) {
-      case 'rect':
-      case 'diamond': {
-        const { width, height } = (childrenNode as RectNodeData | DiamondNodeData).size!;
-        targetPoint = {
-          x: calcX(width),
-          y: position.y + height / 2,
-        };
-        break;
+    // 计算 targetPoint 的通用函数
+    const calcTargetPoint = (): AnchorPoint => {
+      if (isRectOrDiamond(size)) {
+        return { x: offsetX(size.width), y: offsetY(size.height / 2) };
       }
-      case 'circle': {
-        const { radius } = (childrenNode as CircleNodeData).size!;
-        targetPoint = {
-          x: calcX(radius),
-          y: position.y + radius,
-        };
-        break;
+      if (isCircle(size)) {
+        return { x: offsetX(size.radius), y: offsetY(size.radius) };
       }
-      case 'ellipse': {
-        const { rx, ry } = (childrenNode as EllipseNodeData).size!;
-        targetPoint = {
-          x: calcX(rx),
-          y: position.y + ry,
-        };
-        break;
+      if (isEllipse(size)) {
+        return { x: offsetX(size.rx), y: offsetY(size.ry) };
       }
-      default:
-        throw new Error(`Unsupported shape: ${shape}`);
-    }
+      throw new Error(`Unsupported shape: ${shape}`);
+    };
+
+    const sourcePoint =
+      layout === 'tree'
+        ? sourceCalculator.getIntersectionInTree(parentNode as Node<any>, direction)
+        : sourceCalculator.getIntersectionInMindmap(parentNode as Node<any>, childrenNode);
+
+    const targetPoint = calcTargetPoint();
 
     return { sourcePoint, targetPoint };
   }

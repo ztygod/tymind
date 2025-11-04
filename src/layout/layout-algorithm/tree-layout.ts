@@ -60,22 +60,90 @@ export class TreeLayout extends BaseLayout {
 
   /** 递归计算节点坐标 */
   private _assignCoordinates(node: Node, level: number): void {
-    const { treeType, direction } = this.layoutOptions as TreeLayoutOptions;
+    this._assignCoordinatesWithDirection(
+      node,
+      level,
+      (this.layoutOptions as TreeLayoutOptions).treeType
+    );
+  }
+
+  private _assignCoordinatesWithDirection(
+    node: Node,
+    level: number,
+    treeType: 'left' | 'right' | 'both'
+  ): void {
+    const { direction } = this.layoutOptions as TreeLayoutOptions;
     const children = this._getChildren(node);
     if (children.length === 0) return;
 
     const parentWidth = node.size?.width ?? 100;
     const parentHeight = node.size?.height ?? 40;
     const siblingGap = this.layoutOptions.nodeVerticalGap ?? 20;
-
     const parentX = node.getPositionX();
     const parentY = node.getPositionY();
 
-    let accumulatedHeight = 0; // 当前子节点的累计 Y 偏移
+    // 根节点分左右布局
+    if (level === 0 && treeType === 'both') {
+      const mid = Math.ceil(children.length / 2);
+      const leftChildren = children.slice(0, mid);
+      const rightChildren = children.slice(mid);
 
+      let accumulatedHeightLeft = 0;
+      let accumulatedHeightRight = 0;
+
+      // 左侧子节点，强制向 left
+      for (const child of leftChildren) {
+        const childSubtreeHeight = child.layoutProps.subtreeHeight ?? child.size?.height ?? 40;
+        const childX = this._calcCoordinatesX(
+          'left',
+          parentWidth,
+          parentX,
+          child.size?.width ?? 100
+        );
+        const childY = this._calcCoordinatesY(
+          direction,
+          parentHeight,
+          parentY,
+          accumulatedHeightLeft,
+          child.size?.height ?? 40
+        );
+        child.setPosition(childX, childY);
+
+        // 递归时沿用 left
+        this._assignCoordinatesWithDirection(child, level + 1, 'left');
+        accumulatedHeightLeft += childSubtreeHeight + siblingGap;
+      }
+
+      // 右侧子节点，强制向 right
+      for (const child of rightChildren) {
+        const childSubtreeHeight = child.layoutProps.subtreeHeight ?? child.size?.height ?? 40;
+        const childX = this._calcCoordinatesX(
+          'right',
+          parentWidth,
+          parentX,
+          child.size?.width ?? 100
+        );
+        const childY = this._calcCoordinatesY(
+          direction,
+          parentHeight,
+          parentY,
+          accumulatedHeightRight,
+          child.size?.height ?? 40
+        );
+        child.setPosition(childX, childY);
+
+        // 递归时沿用 right
+        this._assignCoordinatesWithDirection(child, level + 1, 'right');
+        accumulatedHeightRight += childSubtreeHeight + siblingGap;
+      }
+
+      return;
+    }
+
+    // 非根节点正常逻辑
+    let accumulatedHeight = 0;
     for (const child of children) {
       const childSubtreeHeight = child.layoutProps.subtreeHeight ?? child.size?.height ?? 40;
-
       const childX = this._calcCoordinatesX(
         treeType,
         parentWidth,
@@ -89,10 +157,10 @@ export class TreeLayout extends BaseLayout {
         accumulatedHeight,
         child.size?.height ?? 40
       );
-
       child.setPosition(childX, childY);
 
-      this._assignCoordinates(child, level + 1);
+      // 保持方向一致
+      this._assignCoordinatesWithDirection(child, level + 1, treeType);
       accumulatedHeight += childSubtreeHeight + siblingGap;
     }
   }

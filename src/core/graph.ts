@@ -3,7 +3,8 @@ import type { EdgeStyleConfig, GraphOptions, NodeData } from '../type';
 import { Edge } from './edge';
 import { Node } from './node';
 import { Renderer } from '../renderer/renderer';
-import type { LayoutOptions } from '../layout/type';
+import type { LayoutOptions, TreeLayoutOptions } from '../layout/type';
+import { LayoutStore } from '../layout/layout-store';
 
 interface GraphInitOptions {
   container: HTMLDivElement;
@@ -85,6 +86,15 @@ export class Graph<T extends LayoutOptions['layoutType'] = LayoutOptions['layout
 
     // Init background (grid) in the Renderer, while providing rendering API
     this._renderer = new Renderer(container, mergedGraphStyle);
+
+    LayoutStore.layoutOptions = {
+      layoutType: this.layoutOptions.layoutType,
+      direction: this.layoutOptions.direction,
+      treeType:
+        layoutOptions.layoutType === 'tree'
+          ? (this.layoutOptions as TreeLayoutOptions).treeType
+          : undefined,
+    };
 
     // Init Node, Edge and load data
     this.loadData(data);
