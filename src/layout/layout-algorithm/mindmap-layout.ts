@@ -1,4 +1,5 @@
 import type { Node } from '../../core/node';
+import { getNodeHeight, getNodeWidth } from '../../share/nodeUtils';
 import { BaseLayout } from '../base-layout';
 
 export class MindmapLayout extends BaseLayout {
@@ -39,7 +40,9 @@ export class MindmapLayout extends BaseLayout {
       maxY = -Infinity;
 
     for (const node of this.nodes.values()) {
-      const { width = 100, height = 40 } = node.size ?? {};
+      const width = getNodeWidth(node) ?? 100;
+      const height = getNodeHeight(node) ?? 40;
+
       const { x, y } = node.position ?? { x: 0, y: 0 };
       minX = Math.min(minX, x);
       maxX = Math.max(maxX, x + width);
@@ -64,7 +67,7 @@ export class MindmapLayout extends BaseLayout {
    */
   private _computeSubTreeHeight(node: Node): void {
     const children = this._getChildren(node);
-    const nodeHeight = node.size?.height ?? 40;
+    const nodeHeight = getNodeHeight(node) ?? 40;
     const siblingGap = this.layoutOptions.nodeVerticalGap ?? 20;
 
     if (children.length === 0) {
@@ -85,7 +88,7 @@ export class MindmapLayout extends BaseLayout {
 
   private _computeSubTreeWidth(node: Node) {
     const children = this._getChildren(node);
-    const nodeWidth = node.size?.width ?? 100;
+    const nodeWidth = getNodeWidth(node) ?? 100;
     const siblingGap = this.layoutOptions.nodeVerticalGap ?? 80;
 
     if (children.length === 0) {
@@ -110,9 +113,10 @@ export class MindmapLayout extends BaseLayout {
     if (children.length === 0) return;
 
     const parentSize = {
-      width: node.size?.width ?? 100,
-      height: node.size?.height ?? 40,
+      width: getNodeWidth(node) ?? 100,
+      height: getNodeHeight(node) ?? 40,
     };
+
     const siblingGap = this.layoutOptions.nodeVerticalGap ?? 20;
     const levelGap = this.layoutOptions.nodeHorizontalGap ?? 80;
 
@@ -127,7 +131,8 @@ export class MindmapLayout extends BaseLayout {
     for (const child of children) {
       const childSubtreeHeight = child.layoutProps.subtreeHeight!;
 
-      const childY = currentY + (child.layoutProps.subtreeHeight! - (child.size?.height ?? 40)) / 2;
+      const childY =
+        currentY + (child.layoutProps.subtreeHeight! - (getNodeHeight(child) ?? 40)) / 2;
 
       const effectiveGap = levelGap / Math.sqrt(1 + level);
       const childX = node.position!.x + direction * (parentSize.width + effectiveGap);
@@ -144,8 +149,8 @@ export class MindmapLayout extends BaseLayout {
     if (children.length === 0) return;
 
     const parentSize = {
-      width: node.size?.width ?? 100,
-      height: node.size?.height ?? 40,
+      width: getNodeWidth(node) ?? 100,
+      height: getNodeHeight(node) ?? 40,
     };
 
     const siblingGap = this.layoutOptions.nodeVerticalGap ?? 20;
@@ -161,7 +166,8 @@ export class MindmapLayout extends BaseLayout {
 
     for (const child of children) {
       const childSubtreeWidth = child.layoutProps.subtreeWidth!;
-      const childX = currentX + (child.layoutProps.subtreeWidth! - (child.size?.width ?? 100)) / 2;
+      const childX =
+        currentX + (child.layoutProps.subtreeWidth! - (getNodeWidth(child) ?? 100)) / 2;
 
       const effectiveGap = levelGap / Math.sqrt(1 + level);
       const childY = node.position!.y + direction * (parentSize.height + effectiveGap);

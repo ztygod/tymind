@@ -3,7 +3,7 @@ import { LayoutStore } from '../layout/layout-store';
 import { LayoutOptions } from '../layout/type';
 import { getIntersectionCalculator } from '../shapes/registry';
 import { AnchorPoint } from '../type';
-import { isCircle, isEllipse, isRectOrDiamond } from './typeUtils';
+import { isCircle, isEllipse, isRectOrDiamond } from '../share/typeUtils';
 
 /**
  * BaseConnector 负责计算节点之间连接的锚点。
@@ -14,7 +14,8 @@ export class BaseConnector {
     parentNode: Node,
     childrenNode: Node,
     direction: 'LR' | 'RL' | 'TB' | 'BT',
-    layout: LayoutOptions['layoutType']
+    layout: LayoutOptions['layoutType'],
+    treeDirection: 'both-right' | 'both-left' | null
   ): { sourcePoint: AnchorPoint; targetPoint: AnchorPoint } {
     const sourceCalculator = getIntersectionCalculator(parentNode.shape!);
     const { position, shape, size } = childrenNode;
@@ -23,23 +24,27 @@ export class BaseConnector {
     if (!size) throw new Error('childNode.size is missing');
 
     // 根据 layout 和 direction 计算 x,y 偏移
-    const offsetX = (val: number) =>
-      layout === 'tree'
-        ? LayoutStore.treeType === 'right'
-          ? position.x
-          : position.x + val
-        : direction === 'LR'
-          ? position.x
-          : direction === 'RL'
-            ? position.x + val
-            : position.x + val / 2;
+    const offsetX = (val: number) => {
+      if (layout === 'tree') {
+        // 根据 treeType 判断
+        const type = LayoutStore.treeType;
+        if (type === 'right') return position.x;
+        if (type === 'left' || treeDirection === 'both-left') return position.x + val;
+        return position.x; // 其他情况
+      }
 
-    const offsetY = (val: number) =>
-      layout === 'mindmap'
-        ? position.y + val
-        : direction === 'TB'
-          ? position.y + val
-          : position.y + val;
+      // 非 tree 布局
+      switch (direction) {
+        case 'LR':
+          return position.x;
+        case 'RL':
+          return position.x + val;
+        default:
+          return position.x + val / 2;
+      }
+    };
+
+    const offsetY = (val: number) => position.y + val;
 
     // 计算 targetPoint 的通用函数
     const calcTargetPoint = (): AnchorPoint => {

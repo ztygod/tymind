@@ -36,6 +36,16 @@ export class DiamondIntersections extends IntersectionCalculator<Node<DiamondNod
     parentNode: Node<DiamondNodeData>,
     direction: 'LR' | 'RL' | 'TB' | 'BT'
   ): AnchorPoint {
-    throw new Error('Method not implemented.');
+    if (direction === 'TB') {
+      return {
+        x: parentNode.position!.x + parentNode.size!.width / 2,
+        y: parentNode.position!.y + parentNode.size!.height,
+      };
+    } else {
+      return {
+        x: parentNode.position!.x + parentNode.size!.width / 2,
+        y: parentNode.position!.y,
+      };
+    }
   }
 }

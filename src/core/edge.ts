@@ -18,6 +18,7 @@ export class Edge {
 
   private _renderer: Renderer;
   private _element: SVGGElement | null = null;
+  private _tree_both_direction: 'both-right' | 'both-left' | null = null;
 
   constructor(
     data: {
@@ -42,14 +43,20 @@ export class Edge {
 
   /** Command the Renderer to draw itself */
   public draw(): void {
-    this._element = this._renderer.drawEdge(this, this.direction);
+    this._element = this._renderer.drawEdge(this, this.direction, this._tree_both_direction);
   }
 
-  /** Update Edge Layout */
-  public update(): void {
-    if (this._element) {
-      this._renderer.updateEdgePath(this._element, this, this.direction);
-    }
+  /** 
+   * 当布局选择树型布局，且采用左右方向时，根据布局设置私有属性，如下
+   * layoutOptions: {
+   *  layoutType: 'tree',
+   *  treeType: 'both',
+   *  direction: 'TB',
+   *  nodeVerticalGap: 10,
+    },
+  */
+  public setTreeInBothDirection(direction: 'both-left' | 'both-right') {
+    this._tree_both_direction = direction;
   }
 
   /** Destroy itself */

@@ -32,6 +32,16 @@ export class CircleIntersections extends IntersectionCalculator<Node<CircleNodeD
     parentNode: Node<CircleNodeData>,
     direction: 'LR' | 'RL' | 'TB' | 'BT'
   ): AnchorPoint {
-    throw new Error('Method not implemented.');
+    if (direction === 'TB') {
+      return {
+        x: parentNode.position!.x + parentNode.size!.radius,
+        y: parentNode.position!.y + parentNode.size!.radius * 2,
+      };
+    } else {
+      return {
+        x: parentNode.position!.x + parentNode.size!.radius,
+        y: parentNode.position!.y,
+      };
+    }
   }
 }

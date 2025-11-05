@@ -151,7 +151,11 @@ export class Renderer {
     return g;
   }
 
-  public drawEdge(edge: Edge, direction: 'LR' | 'RL' | 'TB' | 'BT'): SVGGElement {
+  public drawEdge(
+    edge: Edge,
+    direction: 'LR' | 'RL' | 'TB' | 'BT',
+    treeDirection: 'both-left' | 'both-right' | null
+  ): SVGGElement {
     console.log('begin');
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     g.setAttribute('id', edge.id);
@@ -165,7 +169,7 @@ export class Renderer {
     g.appendChild(path);
 
     this.mainLayer.insertBefore(g, this.mainLayer.firstChild);
-    this.updateEdgePath(g, edge, direction);
+    this.updateEdgePath(g, edge, direction, treeDirection);
 
     return g;
   }
@@ -177,7 +181,8 @@ export class Renderer {
   public updateEdgePath(
     element: SVGGElement,
     edge: Edge,
-    direction: 'LR' | 'RL' | 'TB' | 'BT'
+    direction: 'LR' | 'RL' | 'TB' | 'BT',
+    treeDirection: 'both-left' | 'both-right' | null
   ): void {
     const pathEl = element.querySelector(`#path-${edge.id}`);
     if (!pathEl) return;
@@ -194,7 +199,8 @@ export class Renderer {
       edge.source,
       edge.target,
       direction,
-      LayoutStore.layoutType
+      LayoutStore.layoutType,
+      treeDirection
     );
 
     const pathD = router.getPathD(sourcePoint, targetPoint);

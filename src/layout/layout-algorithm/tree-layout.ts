@@ -1,4 +1,5 @@
 import { Node } from '../../core/node';
+import { getNodeHeight, getNodeWidth } from '../../share/nodeUtils';
 import { BaseLayout } from '../base-layout';
 import { TreeLayoutOptions } from '../type';
 
@@ -10,7 +11,7 @@ export class TreeLayout extends BaseLayout {
     this._computeSubTreeHeight(rootNode);
 
     const { width: viewportWidth, height: viewportHeight } = this.layoutOptions.viewport!;
-    const rootX = viewportWidth / 2 - (rootNode.size?.width ?? 0) / 2;
+    const rootX = viewportWidth / 2 - (getNodeWidth(rootNode) ?? 0) / 2;
     const rootY =
       this.layoutOptions.direction === 'TB' ? viewportHeight / 4 : (viewportHeight * 3) / 4;
 
@@ -37,7 +38,9 @@ export class TreeLayout extends BaseLayout {
 
     // 计算布局边界
     for (const node of this.nodes.values()) {
-      const { width = 100, height = 40 } = node.size ?? {};
+      const width = getNodeWidth(node) ?? 100;
+      const height = getNodeHeight(node) ?? 40;
+
       const { x, y } = node.position ?? { x: 0, y: 0 };
 
       minX = Math.min(minX, x);
@@ -76,8 +79,8 @@ export class TreeLayout extends BaseLayout {
     const children = this._getChildren(node);
     if (children.length === 0) return;
 
-    const parentWidth = node.size?.width ?? 100;
-    const parentHeight = node.size?.height ?? 40;
+    const parentWidth = getNodeWidth(node) ?? 100;
+    const parentHeight = getNodeHeight(node) ?? 40;
     const siblingGap = this.layoutOptions.nodeVerticalGap ?? 20;
     const parentX = node.getPositionX();
     const parentY = node.getPositionY();
@@ -88,24 +91,37 @@ export class TreeLayout extends BaseLayout {
       const leftChildren = children.slice(0, mid);
       const rightChildren = children.slice(mid);
 
+      // 设置方向属性
+      for (const child of leftChildren) {
+        for (const edge of child.outgoingEdges) {
+          edge.setTreeInBothDirection('both-left');
+        }
+      }
+
+      for (const child of rightChildren) {
+        for (const edge of child.outgoingEdges) {
+          edge.setTreeInBothDirection('both-right');
+        }
+      }
+
       let accumulatedHeightLeft = 0;
       let accumulatedHeightRight = 0;
 
       // 左侧子节点，强制向 left
       for (const child of leftChildren) {
-        const childSubtreeHeight = child.layoutProps.subtreeHeight ?? child.size?.height ?? 40;
+        const childSubtreeHeight = child.layoutProps.subtreeHeight ?? getNodeHeight(child) ?? 40;
         const childX = this._calcCoordinatesX(
           'left',
           parentWidth,
           parentX,
-          child.size?.width ?? 100
+          getNodeWidth(child) ?? 100
         );
         const childY = this._calcCoordinatesY(
           direction,
           parentHeight,
           parentY,
           accumulatedHeightLeft,
-          child.size?.height ?? 40
+          getNodeHeight(child) ?? 40
         );
         child.setPosition(childX, childY);
 
@@ -116,19 +132,19 @@ export class TreeLayout extends BaseLayout {
 
       // 右侧子节点，强制向 right
       for (const child of rightChildren) {
-        const childSubtreeHeight = child.layoutProps.subtreeHeight ?? child.size?.height ?? 40;
+        const childSubtreeHeight = child.layoutProps.subtreeHeight ?? getNodeHeight(child) ?? 40;
         const childX = this._calcCoordinatesX(
           'right',
           parentWidth,
           parentX,
-          child.size?.width ?? 100
+          getNodeWidth(child) ?? 100
         );
         const childY = this._calcCoordinatesY(
           direction,
           parentHeight,
           parentY,
           accumulatedHeightRight,
-          child.size?.height ?? 40
+          getNodeHeight(child) ?? 40
         );
         child.setPosition(childX, childY);
 
@@ -143,19 +159,19 @@ export class TreeLayout extends BaseLayout {
     // 非根节点正常逻辑
     let accumulatedHeight = 0;
     for (const child of children) {
-      const childSubtreeHeight = child.layoutProps.subtreeHeight ?? child.size?.height ?? 40;
+      const childSubtreeHeight = child.layoutProps.subtreeHeight ?? getNodeHeight(child) ?? 40;
       const childX = this._calcCoordinatesX(
         treeType,
         parentWidth,
         parentX,
-        child.size?.width ?? 100
+        getNodeWidth(child) ?? 100
       );
       const childY = this._calcCoordinatesY(
         direction,
         parentHeight,
         parentY,
         accumulatedHeight,
-        child.size?.height ?? 40
+        getNodeHeight(child) ?? 40
       );
       child.setPosition(childX, childY);
 
@@ -168,7 +184,7 @@ export class TreeLayout extends BaseLayout {
   /** 递归计算子树高度 */
   private _computeSubTreeHeight(node: Node): void {
     const children = this._getChildren(node);
-    const nodeHeight = node.size?.height ?? 40;
+    const nodeHeight = getNodeHeight(node) ?? 40;
     const siblingGap = this.layoutOptions.nodeVerticalGap ?? 20;
 
     if (children.length === 0) {

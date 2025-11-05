@@ -1,6 +1,6 @@
 import { MindMapCreate } from '.';
-import type { NodeData } from './type';
 import './style.css';
+import { mixedShapeMindMapData } from './demoData';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -8,95 +8,10 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <div id="main"></div>
   </div>
 `;
-const sampleMindMapData: NodeData = {
-  id: 'n1',
-  label: '中心主题',
-  shape: 'rect',
-  size: {
-    // radius: 30
-    width: 120,
-    height: 50,
-  },
-  style: {
-    borderColor: '#333',
-    borderWidth: 2,
-    background: '#fffbe6',
-    fontSize: 14,
-    fontColor: '#222',
-  },
-  position: {
-    x: 0,
-    y: 0,
-  },
-  collapsed: false,
-  children: [
-    {
-      id: 'n2',
-      label: '分支 1',
-      // "shape": "circle",
-      children: [
-        {
-          id: 'n3',
-          label: '子节点 A',
-        },
-        {
-          id: 'n4',
-          label: '子节点 B',
-          children: [
-            {
-              id: 'n4-1',
-              label: '子节点 B-1',
-            },
-            {
-              id: 'n4-2',
-              label: '子节点 B-2',
-            },
-          ],
-        },
-        {
-          id: 'n5',
-          label: '子节点 C',
-        },
-      ],
-    },
-    {
-      id: 'n6',
-      label: '分支 2',
-      children: [
-        {
-          id: 'n6-1',
-          label: '分支 2-1',
-        },
-        {
-          id: 'n6-2',
-          label: '分支 2-2',
-        },
-      ],
-    },
-    {
-      id: 'n7',
-      label: '分支 3',
-      children: [
-        {
-          id: 'n7-1',
-          label: '分支 3-1',
-        },
-        {
-          id: 'n7-2',
-          label: '分支 3-2',
-        },
-      ],
-    },
-  ],
-  data: {
-    note: '自定义扩展字段',
-    link: 'https://example.com',
-  },
-};
 
 MindMapCreate({
   container: document.querySelector<HTMLDivElement>('#main')!,
-  data: sampleMindMapData,
+  data: mixedShapeMindMapData,
   graphStyle: {
     width: 800,
     height: 600,
@@ -105,13 +20,13 @@ MindMapCreate({
     },
   },
   edgeStyle: {
-    type: 'broken-line',
+    type: 'bezier',
     color: 'black',
   },
   layoutOptions: {
-    layoutType: 'tree',
-    treeType: 'both',
-    direction: 'TB',
+    layoutType: 'mindmap',
+    // treeType: 'both',
+    // direction: 'TB',
     nodeVerticalGap: 10,
   },
 });
